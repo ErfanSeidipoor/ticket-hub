@@ -15,3 +15,14 @@ Run `npx nx connect-to-nx-cloud` to enable [remote caching](https://nx.app) and 
 ## Further help
 
 Visit the [Nx Documentation](https://nx.dev) to learn more.
+
+docker build -t erfanseidipoor/ticket-hub-auth -f infra/docker/Dockerfile.auth.dev .
+docker start erfanseidipoor/ticket-hub-auth
+docker history erfanseidipoor/ticket-hub-auth
+docker build -f infra/docker/Dockerfile.auth.dev .
+
+docker run -p 3000:3000 erfanseidipoor/ticket-hub-auth -it sh
+
+docker logs erfanseidipoor/ticket-hub-auth
+
+docker start b25781c61772

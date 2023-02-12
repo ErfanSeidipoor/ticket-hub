@@ -1,0 +1,19 @@
+apiVersion: skaffold/v3
+kind: Config
+build:
+  local:
+    push: false
+  artifacts:
+    - image: erfanseidipoor/ticket-hub-auth
+      context: .
+      sync:
+        manual:
+          - src: ./**/*.ts
+            dest: .
+      docker:
+        dockerfile: infra/docker/Dockerfile.auth.dev
+manifests:
+  rawYaml:
+    - ./infra/k8s/*
+deploy:
+  kubectl: {}
