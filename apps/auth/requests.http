@@ -1,0 +1,9 @@
+### list all requests for auth service
+
+POST http://tckhb.com/api/auth/signin
+content-type: application/json
+
+{
+    "email": "erfan.seidipoor@gmail.com",
+    "password":"12345678"
+}

@@ -4,11 +4,11 @@ build:
   local:
     push: false
   artifacts:
-    - image: erfanseidipoor/ticket-hub-auth
+    - image: erfanseidipoor/tckhb-auth
       context: .
       sync:
         manual:
-          - src: ./**/*.ts
+          - src: ./apps/auth/**/*.ts
             dest: .
       docker:
         dockerfile: infra/docker/Dockerfile.auth.dev
