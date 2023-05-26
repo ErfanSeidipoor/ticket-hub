@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: tckhb-ingress-service
+  annotations:
+    nginx.ingress.kubernetes.io/use-regex: 'true'
+spec:
+  rules:
+  - host: tckhb.com
+    http:
+      paths:
+      - path: /api/auth/?(.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: tckhb-auth-clisterip-service
+            port:
+              number: 8001
+  ingressClassName: nginx

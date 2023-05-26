@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment  
+metadata:
+  name: tckhb-auth-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tckhb-auth
+  template:
+    metadata:
+      labels:
+        app: tckhb-auth
+    spec:
+      containers:
+      - name:  tckhb-auth-container
+        image: erfanseidipoor/tckhb-auth
+        resources:
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 8001
+
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: tckhb-auth-clisterip-service
+spec:
+  type: ClusterIP
+  selector:
+    app: tckhb-auth
+  ports:
+  - name: auth
+    protocol: TCP
+    port: 8001
+    targetPort: 8001
