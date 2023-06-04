@@ -1,27 +1,65 @@
-import mongoose from "mongoose";
+// import mongoose from 'mongoose';
 
-interface UserAttrs {
-    email:string,
-    password:string
-}
+// // An interface that describes the properties
+// // that are requried to create a new User
+// interface UserAttrs {
+//   email: string;
+//   password: string;
+// }
 
-interface UserModel extends mongoose.Model<UserAttrs> {
+// // An interface that describes the properties
+// // that a User Model has
+// interface UserModel extends mongoose.Model<UserDoc> {
+//   build(attrs: UserAttrs): UserDoc;
+// }
 
-}
+// // An interface that describes the properties
+// // that a User Document has
+// interface UserDoc extends mongoose.Document {
+//   email: string;
+//   password: string;
+// }
 
-const userSchema = new mongoose.Schema({
-    email: {
-        type: String,
-        required: true
+// const userSchema = new mongoose.Schema({
+//   email: {
+//     type: String,
+//     required: true
+//   },
+//   password: {
+//     type: String,
+//     required: true
+//   }
+// });
+
+// userSchema.statics.build = (attrs: UserAttrs) => {
+//   return new User(attrs);
+// };
+
+// const User = mongoose.model<UserDoc, UserModel>('User', userSchema);
+
+// export { User, UserDoc};
+
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { HydratedDocument } from 'mongoose';
+
+export type UserDocument = HydratedDocument<User>;
+
+@Schema({
+  toJSON: {
+    transform: (doc, ret) => {
+      ret.id = ret._id;
+      delete ret.password;
+      delete ret.__v;
+      delete ret._id;
     },
-    password: {
-        type: String,
-        required: true,
-    }
+  },
 })
+export class User {
+  @Prop()
+  email: string;
 
-userSchema.statics.build = (attrs:UserAttrs)=> new User(attrs)
+  @Prop()
+  password: string;
+}
 
-const User = mongoose.model('User', userSchema)
-userSchema.statics.build  
-export { User }
+export const UserSchema = SchemaFactory.createForClass(User);

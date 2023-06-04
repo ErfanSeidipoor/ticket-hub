@@ -11,9 +11,9 @@ build:
           - src: ./apps/auth/**/*.ts
             dest: .
       docker:
-        dockerfile: infra/docker/Dockerfile.auth.dev
+        dockerfile: infra/docker.test/Dockerfile.auth
 manifests:
   rawYaml:
-    - ./infra/k8s/*
+    - ./infra/k8s.test/*
 deploy:
   kubectl: {}

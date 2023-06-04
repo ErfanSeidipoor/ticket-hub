@@ -1,14 +1,20 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { CurrentUserMiddleware } from '../middlewares';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
-    MongooseModule.forRoot('mongodb://tckhb-auth-mongo-clusterip-service:27017/auth',{ })
+    MongooseModule.forRoot(
+      'mongodb://tckhb-auth-mongo-clusterip-service:27017/auth'
+    ),
+    AuthModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [],
+  providers: [],
 })
-export class AppModule {}
+export class AppModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(CurrentUserMiddleware).forRoutes('*');
+  }
+}

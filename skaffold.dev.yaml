@@ -1,0 +1,19 @@
+apiVersion: skaffold/v3
+kind: Config
+build:
+  local:
+    push: false
+  artifacts:
+    - image: erfanseidipoor/tckhb-auth
+      context: .
+      sync:
+        manual:
+          - src: ./apps/auth/**/*.ts
+            dest: .
+      docker:
+        dockerfile: infra/docker.dev/Dockerfile.auth
+manifests:
+  rawYaml:
+    - ./infra/k8s.dev/*
+deploy:
+  kubectl: {}
