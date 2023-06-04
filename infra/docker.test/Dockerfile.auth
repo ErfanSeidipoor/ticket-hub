@@ -5,11 +5,9 @@ WORKDIR /app
 
 ADD package.json /app/package.json
 
-RUN npm install -g nx
 RUN npm install --legacy-peer-deps
 
 ADD . /app
 
-RUN nx run auth:build:development
-
-CMD ["nx","serve","auth"]
+EXPOSE 8001
+CMD ["npm","run","test"]

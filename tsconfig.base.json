@@ -16,6 +16,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@tickethub/auth/*": ["apps/auth/src/*"],
       "@tickethub/dto": ["libs/dto/src/index.ts"],
       "@tickethub/error": ["libs/error/src/index.ts"]
     }

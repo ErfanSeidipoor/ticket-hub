@@ -1,9 +1,26 @@
-### list all requests for auth service
-
-POST http://tckhb.com/api/auth/signin
+### signup
+POST http://127.0.0.1:52807/api/auth/signup
 content-type: application/json
 
 {
-    "email": "erfan.seidipoor@gmail.com",
+    "email": "assasdasdasdxasddf@gmail.com",
     "password":"12345678"
 }
+
+### signin
+POST http://127.0.0.1:52807/api/auth/signin
+content-type: application/json
+
+{
+    "email": "assasdasdasdxasddf@gmail.com",
+    "password":"12345678"
+}
+
+### current-user
+GET http://127.0.0.1:52807/api/auth/current-user
+content-type: application/json
+
+
+### signout
+GET http://127.0.0.1:52807/api/auth/signout
+content-type: application/json
