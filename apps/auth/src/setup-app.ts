@@ -4,6 +4,7 @@ import { checkEnv } from './checkEnv';
 
 export const setupApp = async (app: INestApplication) => {
   checkEnv();
+  app.enableCors();
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,

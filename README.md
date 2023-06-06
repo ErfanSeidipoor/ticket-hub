@@ -31,3 +31,10 @@ skaffold -f ./skaffold.dev.yaml dev
 skaffold -f ./skaffold.test.yaml dev
 skaffold -f ./skaffold.test.yaml test
 skaffold -f ./skaffold.test.yaml run
+
+minikube addons enable ingress
+
+kubectl get services --namespace=ingress-nginx
+
+//cross namespace communication
+http://<name of service (ex: ingress-nginx-controller)>/<name of name space (ex: ingress-nginx)>.src.cluster.local
