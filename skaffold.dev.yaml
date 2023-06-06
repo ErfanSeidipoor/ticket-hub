@@ -12,6 +12,14 @@ build:
             dest: .
       docker:
         dockerfile: infra/docker.dev/Dockerfile.auth
+    - image: erfanseidipoor/tckhb-client
+      context: .
+      sync:
+        manual:
+          - src: ./apps/client/**/*.ts
+            dest: .
+      docker:
+        dockerfile: infra/docker.dev/Dockerfile.client
 manifests:
   rawYaml:
     - ./infra/k8s.dev/*

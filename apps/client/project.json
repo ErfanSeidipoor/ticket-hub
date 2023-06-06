@@ -23,7 +23,8 @@
       "defaultConfiguration": "development",
       "options": {
         "buildTarget": "client:build",
-        "dev": true
+        "dev": true,
+        "port": 8002
       },
       "configurations": {
         "development": {
