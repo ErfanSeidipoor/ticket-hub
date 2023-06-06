@@ -16,7 +16,7 @@ export const INVALID_EMAIL_OR_PASSWORD: ICustomError = {
   description: 'Invalid Email or Password',
 };
 
-export const EMAIL_AND_PASSWORD_IS_INCORRECT: ICustomError = {
+export const EMAIL_OR_PASSWORD_IS_INCORRECT: ICustomError = {
   status: HttpStatus.BAD_REQUEST,
   description: 'Email OR Password is Incorrect',
 };
