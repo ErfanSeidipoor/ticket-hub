@@ -29,3 +29,5 @@ kubectl create secret generic jwt-secret --from-literal=JWT_KEY=jwt-key-value
 
 skaffold -f ./skaffold.dev.yaml dev
 skaffold -f ./skaffold.test.yaml dev
+skaffold -f ./skaffold.test.yaml test
+skaffold -f ./skaffold.test.yaml run

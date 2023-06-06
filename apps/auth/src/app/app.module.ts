@@ -1,15 +1,10 @@
 import { MiddlewareConsumer, Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
 import { CurrentUserMiddleware } from '../middlewares';
 import { AuthModule } from './auth/auth.module';
+import { DBModule } from './db/db.module';
 
 @Module({
-  imports: [
-    MongooseModule.forRoot(
-      'mongodb://tckhb-auth-mongo-clusterip-service:27017/auth'
-    ),
-    AuthModule,
-  ],
+  imports: [DBModule, AuthModule],
   controllers: [],
   providers: [],
 })

@@ -41,10 +41,12 @@
 
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
+import { Document } from 'mongoose';
 
 export type UserDocument = HydratedDocument<User>;
 
 @Schema({
+  collection: 'users',
   toJSON: {
     transform: (doc, ret) => {
       ret.id = ret._id;
@@ -54,7 +56,7 @@ export type UserDocument = HydratedDocument<User>;
     },
   },
 })
-export class User {
+export class User extends Document {
   @Prop()
   email: string;
 

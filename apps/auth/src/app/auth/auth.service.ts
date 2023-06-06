@@ -1,17 +1,15 @@
 import { Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Jwt, JwtToken, Password } from '@tickethub/auth/utils';
 import { SigninRequestAuth, SignupRequestAuth } from '@tickethub/dto';
-import { User, UserDocument } from '../../models/user.model';
 import {
   CustomError,
   EMAIL_ALREADY_EXISTS,
-  EMAIL_AND_PASSWORD_IS_INCORRECT,
+  EMAIL_OR_PASSWORD_IS_INCORRECT,
 } from '@tickethub/error';
-import { InjectModel } from '@nestjs/mongoose';
-import jwt from 'jsonwebtoken';
+import { Response } from 'express';
 import { Model } from 'mongoose';
-import { Password } from '@tickethub/auth/utils';
-import { Request, Response } from 'express';
-import { JwtToken } from '@tickethub/auth/middlewares';
+import { User, UserDocument } from '../../models/user.model';
 
 @Injectable()
 export class AuthService {
@@ -24,13 +22,13 @@ export class AuthService {
     const user = await this.userModel.findOne({ email });
 
     if (!user) {
-      throw new CustomError(EMAIL_AND_PASSWORD_IS_INCORRECT);
+      throw new CustomError(EMAIL_OR_PASSWORD_IS_INCORRECT);
     }
 
     const IsMatch = await Password.compare(user.password, password);
 
     if (!IsMatch) {
-      throw new CustomError(EMAIL_AND_PASSWORD_IS_INCORRECT);
+      throw new CustomError(EMAIL_OR_PASSWORD_IS_INCORRECT);
       return;
     }
 
@@ -39,9 +37,9 @@ export class AuthService {
       email: user.email,
     };
 
-    const userJwt = jwt.sign(jwtToken, process.env['JWT_KEY']);
+    const signed = Jwt.sign(jwtToken);
 
-    response.cookie('jwt', userJwt);
+    response.cookie('jwt', signed);
 
     return user;
   }
@@ -72,9 +70,9 @@ export class AuthService {
       email: user.email,
     };
 
-    const userJwt = jwt.sign(jwtToken, process.env['JWT_KEY']);
+    const signed = Jwt.sign(jwtToken);
 
-    response.cookie('jwt', userJwt);
+    response.cookie('jwt', signed);
     return await user.save();
   }
 }

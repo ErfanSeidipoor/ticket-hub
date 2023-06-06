@@ -5,9 +5,10 @@ WORKDIR /app
 
 ADD package.json /app/package.json
 
+RUN npm install -g nx
 RUN npm install --legacy-peer-deps
 
 ADD . /app
 
-EXPOSE 8001
-CMD ["npm","run","test"]
+# CMD ["npm","run","test:watch","-t","current-user"]
+CMD ["npm","run","test:watch"]
