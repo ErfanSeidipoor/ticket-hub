@@ -1,6 +1,6 @@
 import { Injectable, NestMiddleware } from '@nestjs/common';
+import { Jwt } from '@tickethub/utils';
 import { NextFunction, Request, Response } from 'express';
-import { Jwt } from '../utils';
 
 // eslint-disable-next-line @typescript-eslint/no-namespace
 declare global {

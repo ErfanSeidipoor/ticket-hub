@@ -6,7 +6,7 @@ import { AppModule } from '@tickethub/auth/app/app.module';
 import { setupApp } from '@tickethub/auth/setup-app';
 import { Helper } from '@tickethub/auth/test/helper';
 import { SignupRequestAuth } from '@tickethub/dto';
-import { Jwt } from '../utils';
+import { Jwt } from '@tickethub/utils';
 import { EMAIL_OR_PASSWORD_IS_INCORRECT } from '@tickethub/error';
 
 const url = '/signin';

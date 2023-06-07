@@ -1,6 +1,6 @@
 import { MiddlewareConsumer, Module } from '@nestjs/common';
-import { CurrentUserMiddleware } from '../middlewares';
 import { AuthModule } from './auth/auth.module';
+import { CurrentUserMiddleware } from '@tickethub/middleware';
 import { DBModule } from './db/db.module';
 
 @Module({

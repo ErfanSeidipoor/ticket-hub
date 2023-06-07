@@ -1,9 +1,9 @@
 import { Body, Controller, Get, Post, Res, UseGuards } from '@nestjs/common';
-import { UserId } from '@tickethub/auth/decorators';
-import { Authenticated } from '@tickethub/auth/guards/auth.guard';
 import { SigninRequestAuth, SignupRequestAuth } from '@tickethub/dto';
 import { Response } from 'express';
 import { AuthService } from './auth.service';
+import { UserId } from '@tickethub/decorator';
+import { Authenticated } from '@tickethub/guard';
 
 @Controller()
 export class AuthController {

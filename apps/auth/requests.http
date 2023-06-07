@@ -1,5 +1,5 @@
 ### signup
-POST http://127.0.0.1:52807/api/auth/signup
+POST http://127.0.0.1:63844/api/auth/signup
 content-type: application/json
 
 {
@@ -8,7 +8,7 @@ content-type: application/json
 }
 
 ### signin
-POST http://127.0.0.1:52807/api/auth/signin
+POST http://127.0.0.1:63844/api/auth/signin
 content-type: application/json
 
 {
@@ -17,10 +17,10 @@ content-type: application/json
 }
 
 ### current-user
-GET http://127.0.0.1:52807/api/auth/current-user
+GET http://127.0.0.1:63844/api/auth/current-user
 content-type: application/json
 
 
 ### signout
-GET http://127.0.0.1:52807/api/auth/signout
+GET http://127.0.0.1:63844/api/auth/signout
 content-type: application/json
