@@ -2,7 +2,7 @@ import { INestApplication } from '@nestjs/common';
 import { faker } from '@faker-js/faker';
 import jwt from 'jsonwebtoken';
 import { DBService } from '../app/db/db.service';
-import { JwtToken, Password } from '../utils';
+import { JwtToken, Password } from '@tickethub/utils';
 
 export class Helper {
   DBservice: DBService;

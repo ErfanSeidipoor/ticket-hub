@@ -17,8 +17,12 @@
     "baseUrl": ".",
     "paths": {
       "@tickethub/auth/*": ["apps/auth/src/*"],
+      "@tickethub/decorator": ["libs/decorator/src/index.ts"],
       "@tickethub/dto": ["libs/dto/src/index.ts"],
-      "@tickethub/error": ["libs/error/src/index.ts"]
+      "@tickethub/error": ["libs/error/src/index.ts"],
+      "@tickethub/guard": ["libs/guard/src/index.ts"],
+      "@tickethub/middleware": ["libs/middleware/src/index.ts"],
+      "@tickethub/utils": ["libs/utils/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

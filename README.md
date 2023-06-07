@@ -1,5 +1,7 @@
 minikube start --driver=docker
 minikube service <service-name> --url
+
+minikube service tckhb-auth-clisterip-service --url
 sudo minikube tunnel
 minikube dashboard
 

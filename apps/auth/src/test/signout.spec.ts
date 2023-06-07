@@ -4,7 +4,7 @@ import { AppModule } from '@tickethub/auth/app/app.module';
 import { setupApp } from '@tickethub/auth/setup-app';
 import { Helper } from '@tickethub/auth/test/helper';
 import request from 'supertest';
-import { Jwt } from '../utils';
+import { Jwt } from '@tickethub/utils';
 
 const url = '/signout';
 

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Jwt, JwtToken, Password } from '@tickethub/auth/utils';
+import { Jwt, JwtToken, Password } from '@tickethub/utils';
 import { SigninRequestAuth, SignupRequestAuth } from '@tickethub/dto';
 import {
   CustomError,
