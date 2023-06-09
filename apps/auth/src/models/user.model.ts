@@ -57,10 +57,10 @@ export type UserDocument = HydratedDocument<User>;
   },
 })
 export class User extends Document {
-  @Prop()
+  @Prop({ type: String, required: true })
   email: string;
 
-  @Prop()
+  @Prop({ type: String, required: true })
   password: string;
 }
 

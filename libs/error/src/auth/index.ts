@@ -1,15 +1,5 @@
-import { HttpException, HttpStatus } from '@nestjs/common';
-
-export interface ICustomError {
-  status: number;
-  description: string;
-}
-
-export class CustomError extends HttpException {
-  constructor({ description, status }: ICustomError) {
-    super(description, status);
-  }
-}
+import { HttpStatus } from '@nestjs/common';
+import { ICustomError } from '..';
 
 export const INVALID_EMAIL_OR_PASSWORD: ICustomError = {
   status: HttpStatus.BAD_REQUEST,

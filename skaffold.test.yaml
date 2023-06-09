@@ -12,11 +12,14 @@ build:
             dest: .
       docker:
         dockerfile: infra/docker.test/Dockerfile.auth
-# test:
-#   - image: erfanseidipoor/tckhb-auth
-#     custom:
-#       - command: npm run test
-
+    - image: erfanseidipoor/tckhb-tickets
+      context: .
+      sync:
+        manual:
+          - src: ./apps/tickets/**/*.ts
+            dest: .
+      docker:
+        dockerfile: infra/docker.test/Dockerfile.tickets
 manifests:
   rawYaml:
     - ./infra/k8s.test/*

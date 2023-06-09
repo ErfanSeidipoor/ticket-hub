@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: tckhb-auth-mongo-deployment
+  name: tckhb-tickets-mongo-deployment
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: tckhb-auth-mongo
+      app: tckhb-tickets-mongo
   template:
     metadata:
       labels:
-        app: tckhb-auth-mongo
+        app: tckhb-tickets-mongo
     spec:
       containers:
-        - name: auth-mongo
+        - name: tickets-mongo
           image: mongo
           resources:
             limits:
@@ -26,10 +26,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: tckhb-auth-mongo-clusterip-service
+  name: tckhb-tickets-mongo-clusterip-service
 spec:
   selector:
-    app: tckhb-auth-mongo
+    app: tckhb-tickets-mongo
   ports:
     - name: db
       protocol: TCP
