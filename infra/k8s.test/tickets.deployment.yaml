@@ -1,23 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: tckhb-auth-deployment
+  name: tckhb-tickets-deployment
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: tckhb-auth
+      app: tckhb-tickets
   template:
     metadata:
       labels:
-        app: tckhb-auth
+        app: tckhb-tickets
     spec:
       containers:
-        - name: tckhb-auth-container
-          image: erfanseidipoor/tckhb-auth
+        - name: tckhb-tickets-container
+          image: erfanseidipoor/tckhb-tickets
           env:
             - name: MONGO_URL
-              value: mongodb://tckhb-auth-mongo-clusterip-service:27017/auth
+              value: mongodb://tckhb-tickets-mongo-clusterip-service:27017/tickets
             - name: JWT_KEY
               valueFrom:
                 secretKeyRef:
@@ -29,19 +29,19 @@ spec:
               memory: '500Mi'
               cpu: '500m'
           ports:
-            - containerPort: 8001
+            - containerPort: 8003
 
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: tckhb-auth-clisterip-service
+  name: tckhb-tickets-clisterip-service
 spec:
   type: ClusterIP
   selector:
-    app: tckhb-auth
+    app: tckhb-tickets
   ports:
-    - name: auth
+    - name: tickets
       protocol: TCP
-      port: 8001
-      targetPort: 8001
+      port: 8003
+      targetPort: 8003

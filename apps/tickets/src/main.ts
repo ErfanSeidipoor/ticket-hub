@@ -9,12 +9,12 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   setupApp(app);
 
-  const globalPrefix = 'api/auth';
+  const globalPrefix = 'api/tickets';
   app.setGlobalPrefix(globalPrefix);
-  const port = 8001;
+  const port = 8003;
   await app.listen(port);
   Logger.log(
-    `🚀 Application is running on: <auth>:${port}/${globalPrefix} !!!`
+    `🚀 Application is running on: <tickets>:${port}/${globalPrefix} !!!`
   );
 }
 

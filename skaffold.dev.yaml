@@ -12,6 +12,14 @@ build:
             dest: .
       docker:
         dockerfile: infra/docker.dev/Dockerfile.auth
+    - image: erfanseidipoor/tckhb-tickets
+      context: .
+      sync:
+        manual:
+          - src: ./apps/tickets/**/*.ts
+            dest: .
+      docker:
+        dockerfile: infra/docker.dev/Dockerfile.tickets
     - image: erfanseidipoor/tckhb-client
       context: .
       sync:

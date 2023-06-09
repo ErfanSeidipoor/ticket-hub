@@ -1,7 +1,7 @@
 minikube start --driver=docker
 minikube service <service-name> --url
 
-minikube service tckhb-auth-clisterip-service --url
+minikube service tckhb-tickets-clisterip-service --url
 sudo minikube tunnel
 minikube dashboard
 
@@ -34,9 +34,11 @@ skaffold -f ./skaffold.test.yaml dev
 skaffold -f ./skaffold.test.yaml test
 skaffold -f ./skaffold.test.yaml run
 
-minikube addons enable ingress
-
 kubectl get services --namespace=ingress-nginx
 
 //cross namespace communication
 http://<name of service (ex: ingress-nginx-controller)>/<name of name space (ex: ingress-nginx)>.src.cluster.local
+
+kubectl describe nodes
+
+docker system prune -a
