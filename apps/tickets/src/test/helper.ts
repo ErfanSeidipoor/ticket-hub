@@ -1,5 +1,6 @@
 import { INestApplication } from '@nestjs/common';
 import { faker } from '@faker-js/faker';
+import { TicketDocument } from '@tickethub/tickets/models';
 import jwt from 'jsonwebtoken';
 import { DBService } from '../app/db/db.service';
 import { JwtToken, Password } from '@tickethub/utils';
@@ -57,5 +58,23 @@ export class Helper {
     return {
       ticket: await ticket.save(),
     };
+  }
+
+  async createMultipleTickets(
+    count: number,
+    attrs: {
+      title?: string;
+      price?: number;
+      userId?: string;
+    }
+  ): Promise<TicketDocument[]> {
+    const tickets: TicketDocument[] = [];
+
+    for (let index = 0; index < count; index++) {
+      const { ticket } = await this.createTicket(attrs);
+      tickets.push(ticket);
+    }
+
+    return tickets;
   }
 }

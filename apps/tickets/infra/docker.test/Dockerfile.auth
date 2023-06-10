@@ -10,6 +10,4 @@ RUN npm install --legacy-peer-deps
 
 ADD . /app
 
-# CMD ["npm","run","test:watch","-t","current-user"]
-# CMD ["npm","run","test:watch"]
 CMD ["nx","serve","auth"]

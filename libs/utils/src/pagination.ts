@@ -1,4 +1,4 @@
-import { Model, Document, Query, FilterQuery } from 'mongoose';
+import { Document, FilterQuery, Model } from 'mongoose';
 
 export interface IPaginate<T> {
   items: T[];

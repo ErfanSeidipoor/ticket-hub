@@ -28,6 +28,7 @@ kubectl rollout restart deployment <>
 // imperetive command in k8s > run command to directly create object
 // declarative approach > write config file and apply
 kubectl create secret generic jwt-secret --from-literal=JWT_KEY=jwt-key-value
+kubectl create secret generic jwt-secret-test --from-literal=JWT_KEY=jwt-key-value
 
 skaffold -f ./skaffold.dev.yaml dev
 skaffold -f ./skaffold.test.yaml dev

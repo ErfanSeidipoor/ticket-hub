@@ -11,17 +11,17 @@ build:
           - src: ./apps/auth/**/*.ts
             dest: .
       docker:
-        dockerfile: infra/docker.test/Dockerfile.auth
+        dockerfile: apps/auth/infra/docker.test/Dockerfile.auth
     - image: erfanseidipoor/tckhb-tickets
       context: .
       sync:
         manual:
-          - src: ./apps/tickets/**/*.ts
+          - src: ./apps/auth/**/*.ts
             dest: .
       docker:
-        dockerfile: infra/docker.test/Dockerfile.tickets
+        dockerfile: apps/auth/infra/docker.test/Dockerfile.tickets
 manifests:
   rawYaml:
-    - ./infra/k8s.test/*
+    - ./apps/auth/infra/k8s.test/*
 deploy:
   kubectl: {}

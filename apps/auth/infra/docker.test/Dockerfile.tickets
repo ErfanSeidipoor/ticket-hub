@@ -1,0 +1,14 @@
+FROM node:18-alpine as build
+
+RUN apk add --update python3 make g++ && rm -rf /var/cache/apk/*
+WORKDIR /app
+
+ADD package.json /app/package.json
+
+RUN npm install -g nx
+RUN npm install --legacy-peer-deps
+
+ADD . /app
+
+
+CMD ["nx","serve","tickets"]
