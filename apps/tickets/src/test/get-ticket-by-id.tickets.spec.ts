@@ -39,19 +39,14 @@ describe('tickets(GET) api/tickets/:ticketId', () => {
     const response = await request(app.getHttpServer())
       .get(buildUrl(url, { ticketId: ticket.id }))
       .set('Cookie', [`jwt=${userJwt}`])
-      .expect(201);
-
-    console.log({
-      body: response.body,
-      url: buildUrl(url, { ticketId: ticket.id }),
-    });
+      .expect(200);
 
     expect(response.body.price).toEqual(ticket.price);
     expect(response.body.id).toEqual(ticket.id);
     expect(response.body.title).toEqual(ticket.title);
   });
 
-  it('fails 400(EMAIL_OR_PASSWORD_IS_INCORRECT) the ticket is not found', async () => {
+  it('fails 404(TICKET_NOT_FOUND) the ticket is not found', async () => {
     const { userJwt } = await helper.createUser();
     await helper.createTicket({});
 

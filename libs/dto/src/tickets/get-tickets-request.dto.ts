@@ -14,5 +14,5 @@ export class GetTicketsRequestTickets {
 
   @IsOptional()
   @IsMongoId()
-  ticketId?: string;
+  userId?: string;
 }

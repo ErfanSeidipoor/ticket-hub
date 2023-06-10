@@ -3,21 +3,20 @@ import {
   Controller,
   Get,
   Param,
-  ParseUUIDPipe,
   Post,
-  Res,
+  Put,
+  Query,
   UseGuards,
 } from '@nestjs/common';
+import { UserId } from '@tickethub/decorator';
 import {
   CreateTicketRequestTickets,
-  SigninRequestAuth,
-  SignupRequestAuth,
+  GetTicketsRequestTickets,
+  UpdateTicketRequestTickets,
 } from '@tickethub/dto';
-import { Response } from 'express';
-import { TicketsService } from './tickets.service';
-import { UserId } from '@tickethub/decorator';
 import { Authenticated } from '@tickethub/guard';
 import { ParseMongoIdPipe } from '@tickethub/pipe';
+import { TicketsService } from './tickets.service';
 
 @Controller()
 export class TicketsController {
@@ -40,30 +39,19 @@ export class TicketsController {
     return this.ticketService.getById(ticketId);
   }
 
-  // @Get('/current-user')
-  // @UseGuards(Authenticated)
-  // getCurrentUser(@UserId() userId: string) {
-  //   return this.ticketService.currentUser(userId);
-  // }
+  @Get()
+  @UseGuards(Authenticated)
+  get(@Query() query: GetTicketsRequestTickets) {
+    return this.ticketService.get(query);
+  }
 
-  // @Post('/signin')
-  // singin(
-  //   @Res({ passthrough: true }) response: Response,
-  //   @Body() body: SigninRequestAuth
-  // ) {
-  //   return this.ticketService.signin(response, body);
-  // }
-
-  // @Get('/signout')
-  // signout(@Res({ passthrough: true }) response: Response) {
-  //   return this.ticketService.signout(response);
-  // }
-
-  // @Post('/signup')
-  // signup(
-  //   @Res({ passthrough: true }) response: Response,
-  //   @Body() body: SignupRequestAuth
-  // ) {
-  //   return this.ticketService.signup(response, body);
-  // }
+  @Put('/:ticketId')
+  @UseGuards(Authenticated)
+  update(
+    @UserId() userId: string,
+    @Param('ticketId', new ParseMongoIdPipe()) ticketId: string,
+    @Body() body: UpdateTicketRequestTickets
+  ) {
+    return this.ticketService.update(userId, ticketId, body);
+  }
 }

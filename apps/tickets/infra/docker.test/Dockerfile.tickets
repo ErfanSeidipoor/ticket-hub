@@ -10,6 +10,6 @@ RUN npm install --legacy-peer-deps
 
 ADD . /app
 
-CMD ["npm","run","test:watch","-t","get-ticket-by-id.tickets"]
+CMD ["npm","run","test:watch","-t","signin.auth"]
 # CMD ["npm","run","test:watch"]
 # CMD ["nx","serve","tickets"]

@@ -19,10 +19,7 @@ spec:
             - name: MONGO_URL
               value: mongodb://tckhb-auth-mongo-clusterip-service:27017/auth
             - name: JWT_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: jwt-secret-test
-                  key: JWT_KEY
+              value: jwt-secret-key
           imagePullPolicy: Never
           resources:
             limits:
