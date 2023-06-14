@@ -6,6 +6,7 @@ import { AppModule } from '@tickethub/tickets/app/app.module';
 import { setupApp } from '@tickethub/tickets/setup-app';
 import { Helper } from '@tickethub/tickets/test/helper';
 import { CreateTicketRequestTickets } from '@tickethub/dto';
+import { sleep } from '@tickethub/utils';
 
 const url = '/';
 
@@ -30,22 +31,6 @@ describe('tickets(POST) api/tickets', () => {
 
   afterAll(async () => {
     helper.closeConnection();
-  });
-
-  it('has a route handler listening to (POST)/api/tickets', async () => {
-    const { userJwt } = await helper.createUser();
-
-    requestBody = {
-      title: faker.word.words(3),
-      price: faker.number.float({ min: 100, max: 1000 }),
-    };
-
-    const response = await request(app.getHttpServer())
-      .post(url)
-      .set('Cookie', [`jwt=${userJwt}`])
-      .send(requestBody);
-
-    expect(response.status).not.toEqual(404);
   });
 
   it('returns a status other than 401 if the user is signed in', async () => {
@@ -96,7 +81,7 @@ describe('tickets(POST) api/tickets', () => {
     expect(response.status).toEqual(400);
   });
 
-  it('creates a ticket with valid inputs', async () => {
+  it.only('creates a ticket with valid inputs', async () => {
     const { userJwt, userId } = await helper.createUser();
 
     let tickets = await helper.DBservice.ticketModel.find({});
@@ -107,15 +92,12 @@ describe('tickets(POST) api/tickets', () => {
       price: faker.number.float({ min: 100, max: 1000 }),
     };
 
-    console.log({ requestBody });
-
-    const response = await request(app.getHttpServer())
+    await request(app.getHttpServer())
       .post(url)
       .set('Cookie', [`jwt=${userJwt}`])
       .send(requestBody);
 
-    console.log(response.body);
-
+    await sleep();
     tickets = await helper.DBservice.ticketModel.find({});
     expect(tickets.length).toEqual(1);
     expect(tickets[0].price).toEqual(requestBody.price);

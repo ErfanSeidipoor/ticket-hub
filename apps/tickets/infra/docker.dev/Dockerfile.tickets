@@ -10,4 +10,7 @@ RUN npm install --legacy-peer-deps
 
 ADD . /app
 
-CMD ["nx","serve","auth"]
+RUN nx run tickets:build:development
+
+EXPOSE 8003
+CMD ["nx","serve","tickets"]

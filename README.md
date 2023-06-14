@@ -34,6 +34,7 @@ skaffold -f ./skaffold.dev.yaml dev
 skaffold -f ./skaffold.test.yaml dev
 skaffold -f ./skaffold.test.yaml test
 skaffold -f ./skaffold.test.yaml run
+skaffold -f ./skaffold.test.tickets.yaml dev
 
 kubectl get services --namespace=ingress-nginx
 
@@ -43,3 +44,12 @@ http://<name of service (ex: ingress-nginx-controller)>/<name of name space (ex:
 kubectl describe nodes
 
 docker system prune -a
+
+kubectl apply -f ./in
+
+kubectl port-forward tckhb-tickets-deployment-76c9c4fb5d-bz4s8 8003:8003
+
+skaffold -f ./skaffold.dev.tickets.yaml dev
+kubectl apply -f ./infra/k8s.dev/tickets-mongo.deployment.yaml
+kubectl apply -f ./infra/k8s.dev/tickets.deployment.yaml
+kubectl apply -f ./infra/k8s.dev/kafka.deployment.yaml
