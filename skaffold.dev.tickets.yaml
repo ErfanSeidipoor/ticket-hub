@@ -11,9 +11,9 @@ build:
           - src: ./apps/tickets/**/*.ts
             dest: .
       docker:
-        dockerfile: apps/tickets/infra/docker.test/Dockerfile.tickets
+        dockerfile: apps/tickets/infra/docker.dev/Dockerfile.tickets
 manifests:
   rawYaml:
-    - ./apps/tickets/infra/k8s.test/*
+    - ./apps/tickets/infra/k8s.dev/*
 deploy:
   kubectl: {}

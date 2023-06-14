@@ -16,8 +16,16 @@ spec:
         - name: tckhb-tickets-container
           image: erfanseidipoor/tckhb-tickets
           env:
+            - name: KAFKA_GROUP
+              value: tckhb-tickets-deployment
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
             - name: MONGO_URL
               value: mongodb://tckhb-tickets-mongo-clusterip-service:27017/tickets
+            - name: KAFKA_URL
+              value: tckhb-kafka-clusterip-service:9092
             - name: JWT_KEY
               valueFrom:
                 secretKeyRef:

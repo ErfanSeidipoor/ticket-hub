@@ -24,11 +24,11 @@ export class TicketsController {
 
   @Get('/health')
   healthCheck() {
-    return '/api/tickets 🚀🚀';
+    return '/api/tickets 🚀🚀🚀';
   }
 
   @Post()
-  @UseGuards(Authenticated)
+  // @UseGuards(Authenticated)
   create(@UserId() userId: string, @Body() body: CreateTicketRequestTickets) {
     return this.ticketService.create(userId, body);
   }
