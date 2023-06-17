@@ -4,7 +4,8 @@
   "license": "MIT",
   "scripts": {
     "test:watch": "jest --watchAll",
-    "test": "jest"
+    "test": "jest",
+    "dev:tickets": "sh tickets.dev.sh"
   },
   "private": true,
   "dependencies": {

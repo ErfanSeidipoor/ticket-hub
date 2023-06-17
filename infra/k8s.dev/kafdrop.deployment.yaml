@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tckhb-kafdrop-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tckhb-kafdrop
+  template:
+    metadata:
+      labels:
+        app: tckhb-kafdrop
+    spec:
+      containers:
+        - name: kafdrop
+          image: obsidiandynamics/kafdrop:latest
+          resources:
+            limits:
+              memory: '500Mi'
+              cpu: '500m'
+          ports:
+            - containerPort: 9000
+          env:
+            - name: KAFKA_BROKERCONNECT
+              value: 'http://tckhb-kafka-clusterip-service:9092'
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tckhb-kafdrop-clusterip-service
+spec:
+  selector:
+    app: tckhb-kafdrop
+  ports:
+    - name: client
+      protocol: TCP
+      port: 9000
+      targetPort: 9000
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tckhb-kafdrop-nodeport-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: tckhb-kafdrop
+  ports:
+    - name: tickets-nodeport
+      protocol: TCP
+      port: 9000
+      targetPort: 9000
+      nodePort: 30421
