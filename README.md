@@ -47,9 +47,30 @@ docker system prune -a
 
 kubectl apply -f ./in
 
-kubectl port-forward tckhb-tickets-deployment-76c9c4fb5d-bz4s8 8003:8003
+kubectl port-forward tckhb-kafdrop-deployment-664c597659-22nqz 9000:9000
 
 skaffold -f ./skaffold.dev.tickets.yaml dev
 kubectl apply -f ./infra/k8s.dev/tickets-mongo.deployment.yaml
 kubectl apply -f ./infra/k8s.dev/tickets.deployment.yaml
 kubectl apply -f ./infra/k8s.dev/kafka.deployment.yaml
+kubectl apply -f ./infra/k8s.dev/kafdrop.deployment.yaml
+
+kubectl delete deployments --all -n default
+kubectl delete services --all -n default
+
+## Develop tickets
+
+kubectl apply -f ./infra/k8s.dev/tickets-mongo.deployment.yaml
+kubectl apply -f ./infra/k8s.dev/kafka.deployment.yaml
+kubectl apply -f ./infra/k8s.dev/kafdrop.deployment.yaml
+
+skaffold -f ./skaffold.dev.tickets.yaml dev
+
+kubectl port-forward tckhb-tickets-deployment-5f4c698667-xhr8h 8003:8003
+kubectl port-forward tckhb-kafdrop-deployment-5dd9fd89dd-bm8nj 9000:9000
+
+minikube service <service>
+minikube service <service> --url
+curl $(minikube service tckhb-kafdrop-nodeport-service --url)
+
+kubectl expose deployment tckhb-kafdrop-deployment --type=NodePort
