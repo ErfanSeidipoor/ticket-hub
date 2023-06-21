@@ -1,4 +1,5 @@
 minikube start --driver=docker
+minikube start --driver=docker --force
 minikube service <service-name> --url
 
 minikube service tckhb-tickets-clisterip-service --url
@@ -63,11 +64,14 @@ kubectl delete services --all -n default
 kubectl apply -f ./infra/k8s.dev/tickets-mongo.deployment.yaml
 kubectl apply -f ./infra/k8s.dev/kafka.deployment.yaml
 kubectl apply -f ./infra/k8s.dev/kafdrop.deployment.yaml
+kubectl apply -f ./infra/k8s.dev/auth.deployment.yaml
+kubectl apply -f ./infra/k8s.dev/auth-mongo.deployment.yaml
+kubectl apply -f ./infra/k8s.dev/kafdrop.deployment.yaml
 
 skaffold -f ./skaffold.dev.tickets.yaml dev
 
 kubectl port-forward tckhb-tickets-deployment-5f4c698667-xhr8h 8003:8003
-kubectl port-forward tckhb-kafdrop-deployment-5dd9fd89dd-bm8nj 9000:9000
+kubectl port-forward tckhb-kafdrop-deployment-5dd9fd89dd-gstv2 9000:9000
 
 minikube service <service>
 minikube service <service> --url
