@@ -78,3 +78,20 @@ minikube service <service> --url
 curl $(minikube service tckhb-kafdrop-nodeport-service --url)
 
 kubectl expose deployment tckhb-kafdrop-deployment --type=NodePort
+
+
+kubectl get pods
+kubectl get deployments
+kubectl get services
+
+/etc/nginx/nginx.conf
+sudo nginx -t
+sudo service nginx restart
+
+
+kubectl delete pods --all
+kubectl delete deployments --all
+kubectl delete services --all
+
+
+nx test tickets --test-file="apps/tickets/src/test/create-ticket.tickets.spec.ts"

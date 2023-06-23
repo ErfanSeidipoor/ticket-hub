@@ -9,13 +9,13 @@ import { CustomError, TICKET_NOT_FOUND } from '@tickethub/error';
 import { Ticket, TicketDocument } from '@tickethub/tickets/models';
 import { IPaginate, assignDefinedProps, paginate } from '@tickethub/utils';
 import { FilterQuery, Model } from 'mongoose';
-import { ProducerService } from '../kafka/producer.service';
+import { KafkaService } from '../kafka/kafka.service';
 
 @Injectable()
 export class TicketsService {
   constructor(
     @InjectModel(Ticket.name) private ticketModel: Model<Ticket>,
-    private readonly producerService: ProducerService
+    private readonly kafkaService: KafkaService
   ) {}
 
   async create(
@@ -23,7 +23,7 @@ export class TicketsService {
     { price, title }: CreateTicketRequestTickets
   ): Promise<TicketDocument> {
     const ticket = new this.ticketModel({ title, price, userId });
-    await this.producerService.produce({
+    await this.kafkaService.produce({
       topic: 'tickets-create-ticket',
       messages: [
         { key: userId, value: JSON.stringify({ title, price, userId }) },

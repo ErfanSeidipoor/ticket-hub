@@ -3,6 +3,11 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
+    "clear": "sh scripts/dev.clear.sh",
+    "tickets:dev:req": "sh scripts/dev.tickets.sh",
+    "tickets:test:req": "sh scripts/test.tickets.sh",
+    "tickets:dev": "nx serve tickets",
+    "tickets:test": "nx test tickets",
     "test:watch": "jest --watchAll",
     "test": "jest",
     "dev:tickets": "sh tickets.dev.sh"

@@ -5,7 +5,7 @@ import { CurrentUserMiddleware } from '@tickethub/middleware';
 import { DBModule } from './db/db.module';
 
 @Module({
-  imports: [DBModule, TicketsModule, KafkaModule],
+  imports: [DBModule, TicketsModule,KafkaModule],
   controllers: [],
   providers: [],
 })

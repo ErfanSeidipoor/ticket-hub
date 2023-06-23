@@ -60,8 +60,6 @@ describe('tickets(GET) api/tickets', () => {
 
     requestQuery = { limit: 5, page: 1, userId };
 
-    console.log({ url: buildUrl(url, {}, requestQuery) });
-
     const response = await request(app.getHttpServer())
       .get(buildUrl(url, {}, requestQuery))
       .set('Cookie', [`jwt=${userJwt}`])

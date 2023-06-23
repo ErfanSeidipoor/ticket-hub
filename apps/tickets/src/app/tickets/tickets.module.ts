@@ -11,7 +11,9 @@ import { CreateTicketConsumer } from './create.consumer';
     KafkaModule,
     MongooseModule.forFeature([{ name: Ticket.name, schema: TicketSchema }]),
   ],
-  providers: [TicketsService, CreateTicketConsumer],
+  providers: [TicketsService, 
+    CreateTicketConsumer
+  ],
   exports: [TicketsService],
   controllers: [TicketsController],
 })

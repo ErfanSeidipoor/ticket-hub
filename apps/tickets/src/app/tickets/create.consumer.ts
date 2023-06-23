@@ -1,13 +1,13 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
-import { ConsumerService } from '../kafka/consumer.service';
+import { KafkaService } from '../kafka/kafka.service';
 
 @Injectable()
 export class CreateTicketConsumer implements OnModuleInit {
-  constructor(private readonly _consumer: ConsumerService) {}
+  constructor(private readonly kafkaService: KafkaService) {}
 
   async onModuleInit() {
-    this._consumer.consume(
-      { topics: ['tickets-create-ticket'] },
+    this.kafkaService.consume(
+      { topics: ['tickets-create-ticket'], },
       {
         eachMessage: async ({ topic, partition, message }) => {
           console.log({

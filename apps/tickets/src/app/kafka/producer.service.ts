@@ -9,15 +9,17 @@ import { Kafka, Partitioners, Producer, ProducerRecord } from 'kafkajs';
 export class ProducerService implements OnModuleInit, OnApplicationShutdown {
   private readonly kafka = new Kafka({
     brokers: [process.env.KAFKA_URL],
-    // logLevel: logLevel.ERROR,
   });
+
 
   private readonly producer: Producer = this.kafka.producer({
     createPartitioner: Partitioners.LegacyPartitioner,
   });
 
   async onModuleInit() {
+    console.log("connect ...");
     await this.producer.connect();
+    console.log("connected");
   }
 
   async produce(record: ProducerRecord) {

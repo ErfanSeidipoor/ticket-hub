@@ -17,7 +17,11 @@ export class ConsumerService {
     const cosumer: Consumer = this.kafka.consumer({
       groupId: process.env.KAFKA_GROUP,
     });
+
+    console.log("ConsumerService onnect ....");
+    
     await cosumer.connect();
+    console.log("ConsumerService connected");
     await cosumer.subscribe(topics);
 
     await cosumer.run(config);

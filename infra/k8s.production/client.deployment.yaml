@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tckhb-client-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tckhb-client
+  template:
+    metadata:
+      labels:
+        app: tckhb-client
+    spec:
+      containers:
+        - name: tckhb-client-container
+          image: erfanseidipoor/tckhb-client
+          imagePullPolicy: Never
+          resources:
+            limits:
+              memory: '500Mi'
+              cpu: '500m'
+          ports:
+            - containerPort: 8002
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tckhb-client-clisterip-service
+spec:
+  type: ClusterIP
+  selector:
+    app: tckhb-client
+  ports:
+    - name: client
+      protocol: TCP
+      port: 8002
+      targetPort: 8002
+
+---
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: tckhb-client-nodeport-service
+# spec:
+#   type: NodePort
+#   selector:
+#     app: tckhb-client
+#   ports:
+#     - name: client-nodeport
+#       protocol: TCP
+#       port: 8002
+#       targetPort: 8002

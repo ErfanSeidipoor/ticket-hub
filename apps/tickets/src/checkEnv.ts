@@ -1,4 +1,13 @@
 export const checkEnv = () => {
+
+  console.log({
+    POD_NAME: process.env.POD_NAME,
+    JWT_KEY: process.env.JWT_KEY,
+    KAFKA_GROUP: process.env.KAFKA_GROUP,
+    KAFKA_URL: process.env.KAFKA_URL,
+    MONGO_URL: process.env.MONGO_URL,
+  });
+  
   if (!process.env.POD_NAME) {
     throw new Error('POD_NAME must be Defined');
   }
