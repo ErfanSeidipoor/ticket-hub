@@ -7,7 +7,7 @@ export class CreateTicketConsumer implements OnModuleInit {
 
   async onModuleInit() {
     this.kafkaService.consume(
-      { topics: ['tickets-create-ticket'], },
+      { topics: ['tickets-create-ticket'], fromBeginning: true},
       {
         eachMessage: async ({ topic, partition, message }) => {
           console.log({

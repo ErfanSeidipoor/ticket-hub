@@ -9,7 +9,7 @@ import { CreateTicketRequestTickets } from '@tickethub/dto';
 import { sleep } from '@tickethub/utils';
 
 const url = '/';
-
+jest.setTimeout(300000)
 describe('tickets(POST) api/tickets', () => {
   let app: INestApplication;
   let helper: Helper;
@@ -26,7 +26,8 @@ describe('tickets(POST) api/tickets', () => {
   });
 
   beforeEach(async () => {
-    helper.dropAllCollections();
+    await helper.dropAllCollections();
+    await helper.createKafkaConsumer();
   });
 
   afterAll(async () => {
@@ -98,11 +99,13 @@ describe('tickets(POST) api/tickets', () => {
       .set('Cookie', [`jwt=${userJwt}`])
       .send(requestBody);
 
-    await sleep();
-    tickets = await helper.DBservice.ticketModel.find({});
-    expect(tickets.length).toEqual(1);
-    expect(tickets[0].price).toEqual(requestBody.price);
-    expect(tickets[0].title).toEqual(requestBody.title);
-    expect(tickets[0].userId).toEqual(userId);
+      tickets = await helper.DBservice.ticketModel.find({});
+      expect(tickets.length).toEqual(1);
+      expect(tickets[0].price).toEqual(requestBody.price);
+      expect(tickets[0].title).toEqual(requestBody.title);
+      expect(tickets[0].userId).toEqual(userId);
+
+      console.log(helper.kafkaMessages);
+      
   });
 });

@@ -11,9 +11,9 @@ export class KafkaService implements OnModuleInit, OnApplicationShutdown {
     brokers: [process.env.KAFKA_URL as string],
   });
 
-  private requiredTopics = ['tickets-create-ticket']
+  public readonly requiredTopics = ['tickets-create-ticket']
 
-  private readonly admin: Admin = this.kafka.admin()
+  public  readonly admin: Admin = this.kafka.admin()
 
   private readonly consumers: Consumer[] = [];
 
@@ -47,18 +47,13 @@ export class KafkaService implements OnModuleInit, OnApplicationShutdown {
   }
 
 
-  async consume(topics: ConsumerSubscribeTopics, config: ConsumerRunConfig) {
+  async consume(topics: ConsumerSubscribeTopics, config: ConsumerRunConfig, groupId?:string) {
     const cosumer: Consumer = this.kafka.consumer({
-      groupId: process.env.KAFKA_GROUP as string,
+      groupId: groupId || process.env.KAFKA_GROUP!,
     });
     await cosumer.connect()
     await cosumer.subscribe(topics);
     await cosumer.run(config);
     this.consumers.push(cosumer);
-  }
-
-
-  clearAllMessages() {
-    this.admin
   }
 }

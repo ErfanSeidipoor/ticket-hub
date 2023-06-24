@@ -3,12 +3,19 @@ import { faker } from '@faker-js/faker';
 import { TicketDocument } from '@tickethub/tickets/models';
 import jwt from 'jsonwebtoken';
 import { DBService } from '../app/db/db.service';
-import { JwtToken, Password } from '@tickethub/utils';
+import { KafkaService } from '../app/kafka/kafka.service';
+import { JwtToken } from '@tickethub/utils';
+import { KafkaMessage } from 'kafkajs';
 
 export class Helper {
   DBservice: DBService;
+  kafkaService: KafkaService;
+  kafkaMessages: { topic: string; partition: number; message: KafkaMessage }[];
+
   constructor(public app: INestApplication) {
     this.DBservice = app.get<DBService>(DBService);
+    this.kafkaService = app.get<KafkaService>(KafkaService);
+    this.kafkaMessages = [];
   }
 
   async closeConnection() {
@@ -23,6 +30,23 @@ export class Helper {
     for (const key in collections) {
       await collections[key].deleteMany({});
     }
+  }
+
+  async createKafkaConsumer() {
+    await this.kafkaService.consume(
+      { topics: this.kafkaService.requiredTopics },
+      {
+        eachMessage: async ({ topic, partition, message }) => {
+          console.log({
+            message: message.value.toString(),
+            partition: partition.toString(),
+            topic: topic.toString(),
+          });
+          this.kafkaMessages.push({ topic, partition, message });
+        },
+      },
+      'grounp-test'
+    );
   }
 
   async createUser() {
