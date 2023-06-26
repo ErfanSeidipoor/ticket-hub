@@ -22,6 +22,7 @@
       "@tickethub/error": ["libs/error/src/index.ts"],
       "@tickethub/guard": ["libs/guard/src/index.ts"],
       "@tickethub/middleware": ["libs/middleware/src/index.ts"],
+      "@tickethub/module": ["libs/module/src/index.ts"],
       "@tickethub/pipe": ["libs/pipe/src/index.ts"],
       "@tickethub/tickets/*": ["apps/tickets/src/*"],
       "@tickethub/utils": ["libs/utils/src/index.ts"]
