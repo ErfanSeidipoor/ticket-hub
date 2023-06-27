@@ -32,6 +32,12 @@ spec:
               value: 'yes'
             - name: KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE
               value: 'true'
+            - name: KAFKA_CFG_OFFSETS_TOPIC_REPLICATION_FACTOR
+              value: '1'
+            - name: KAFKA_CFG_DEFAULT_REPLICATION_FACTOR
+              value: '1'
+            - name: KAFKA_CFG_GROUP_COORDINATOR_NEW_ENABLE
+              value: 'true'
 
 ---
 apiVersion: v1
@@ -46,7 +52,7 @@ spec:
       protocol: TCP
       port: 9092
       targetPort: 9092
-      
+
 ---
 apiVersion: v1
 kind: Service

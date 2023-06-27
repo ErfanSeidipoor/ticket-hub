@@ -23,15 +23,14 @@ export class TicketsService {
     { price, title }: CreateTicketRequestTickets
   ): Promise<TicketDocument> {
     const ticket = new this.ticketModel({ title, price, userId });
-    
+
     const res = await this.kafkaService.produce({
       topic: 'tickets-create-ticket',
       messages: [
         { key: userId, value: JSON.stringify({ title, price, userId }) },
       ],
     });
-    console.log("******** produce message",{res});
-    
+
     return ticket.save();
   }
 
