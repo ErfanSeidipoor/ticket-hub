@@ -25,11 +25,11 @@ describe('tickets(GET) api/tickets/:ticketId', () => {
   });
 
   beforeEach(async () => {
-    helper.dropAllCollections();
+    await helper.dropAllCollections();
   });
 
   afterAll(async () => {
-    helper.closeConnection();
+    await helper.closeConnection();
   });
 
   it('returns the ticket if the ticket is found', async () => {

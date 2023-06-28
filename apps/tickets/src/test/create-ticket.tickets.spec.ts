@@ -7,9 +7,10 @@ import { setupApp } from '@tickethub/tickets/setup-app';
 import { Helper } from '@tickethub/tickets/test/helper';
 import { CreateTicketRequestTickets } from '@tickethub/dto';
 import { sleep } from '@tickethub/utils';
+import { TopicsEnum } from '@tickethub/event';
 
 const url = '/';
-jest.setTimeout(300000)
+jest.setTimeout(30000);
 describe('tickets(POST) api/tickets', () => {
   let app: INestApplication;
   let helper: Helper;
@@ -23,19 +24,23 @@ describe('tickets(POST) api/tickets', () => {
     setupApp(app);
     await app.init();
     helper = new Helper(app);
+    await helper.createKafkaConsumers();
   });
 
   beforeEach(async () => {
     await helper.dropAllCollections();
-    await helper.createKafkaConsumer();
+    helper.cleareMessages();
   });
 
   afterAll(async () => {
-    helper.closeConnection();
+    await helper.closeConnection();
   });
 
+  afterEach(async () => {
+    await helper.cleareMessages();
+  });
 
-  it('returns a status other than 401 if the user is signed in', async () => {
+  it('returns a status other than 403 if the user is signed in', async () => {
     const { userJwt } = await helper.createUser();
 
     requestBody = {
@@ -99,13 +104,22 @@ describe('tickets(POST) api/tickets', () => {
       .set('Cookie', [`jwt=${userJwt}`])
       .send(requestBody);
 
-      tickets = await helper.DBservice.ticketModel.find({});
-      expect(tickets.length).toEqual(1);
-      expect(tickets[0].price).toEqual(requestBody.price);
-      expect(tickets[0].title).toEqual(requestBody.title);
-      expect(tickets[0].userId).toEqual(userId);
+    await sleep(5000);
 
-      console.log(helper.kafkaMessages);
-      
+    tickets = await helper.DBservice.ticketModel.find({});
+    expect(tickets.length).toEqual(1);
+    expect(tickets[0].price).toEqual(requestBody.price);
+    expect(tickets[0].title).toEqual(requestBody.title);
+    expect(tickets[0].userId).toEqual(userId);
+
+    expect(helper.kafkaMessages).toHaveLength(1);
+
+    const ticketCreatedEvent = helper.kafkaMessages[0];
+
+    expect(ticketCreatedEvent.topic).toBe(TopicsEnum.ticket_created);
+    expect(ticketCreatedEvent.value.id).toBe(tickets[0].id);
+    expect(ticketCreatedEvent.value.title).toBe(tickets[0].title);
+    expect(ticketCreatedEvent.value.price).toBe(tickets[0].price);
+    expect(ticketCreatedEvent.value.userId).toBe(tickets[0].userId);
   });
 });

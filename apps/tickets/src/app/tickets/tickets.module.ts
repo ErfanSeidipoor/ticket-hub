@@ -4,16 +4,16 @@ import { KafkaModule } from '../kafka/kafka.module';
 import { Ticket, TicketSchema } from '../../models';
 import { TicketsController } from './tickets.controller';
 import { TicketsService } from './tickets.service';
-import { CreateTicketConsumer } from './create.consumer';
+import { Consumers } from './cusnomers';
+import { DBModule } from '../db/db.module';
 
 @Module({
   imports: [
     KafkaModule,
+    DBModule,
     MongooseModule.forFeature([{ name: Ticket.name, schema: TicketSchema }]),
   ],
-  providers: [TicketsService, 
-    CreateTicketConsumer
-  ],
+  providers: [TicketsService, ...Consumers],
   exports: [TicketsService],
   controllers: [TicketsController],
 })

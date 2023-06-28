@@ -9,4 +9,19 @@ export class DBService {
     @InjectConnection() public readonly connection: Connection,
     @InjectModel(Ticket.name) public ticketModel: Model<Ticket>
   ) {}
+
+  async transaction(fn: () => Promise<void>) {
+    const session = await this.ticketModel.db.startSession();
+
+    try {
+      session.startTransaction();
+      await fn();
+      await session.commitTransaction();
+    } catch (error) {
+      await session.abortTransaction();
+      throw error;
+    } finally {
+      session.endSession();
+    }
+  }
 }

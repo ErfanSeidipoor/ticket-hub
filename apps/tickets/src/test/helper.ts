@@ -1,16 +1,22 @@
-import { INestApplication } from '@nestjs/common';
 import { faker } from '@faker-js/faker';
+import { INestApplication } from '@nestjs/common';
+import {
+  TicketCreatedCunsomer,
+  TicketCreatedEvent,
+  TicketUpdatedCunsomer,
+  TicketUpdatedEvent,
+} from '@tickethub/event';
 import { TicketDocument } from '@tickethub/tickets/models';
+import { JwtToken } from '@tickethub/utils';
 import jwt from 'jsonwebtoken';
 import { DBService } from '../app/db/db.service';
 import { KafkaService } from '../app/kafka/kafka.service';
-import { JwtToken } from '@tickethub/utils';
-import { KafkaMessage } from 'kafkajs';
 
 export class Helper {
   DBservice: DBService;
   kafkaService: KafkaService;
-  kafkaMessages: { topic: string; partition: number; message: KafkaMessage }[];
+  kafkaMessages: (TicketCreatedEvent | TicketUpdatedEvent)[] = [];
+  groupId = 'group-test';
 
   constructor(public app: INestApplication) {
     this.DBservice = app.get<DBService>(DBService);
@@ -32,21 +38,29 @@ export class Helper {
     }
   }
 
-  async createKafkaConsumer() {
-    await this.kafkaService.consume(
-      { topics: this.kafkaService.requiredTopics },
-      {
-        eachMessage: async ({ topic, partition, message }) => {
-          console.log({
-            message: message.value.toString(),
-            partition: partition.toString(),
-            topic: topic.toString(),
-          });
-          this.kafkaMessages.push({ topic, partition, message });
-        },
-      },
-      'grounp-test'
-    );
+  cleareMessages() {
+    this.kafkaMessages = [];
+  }
+
+  async createKafkaConsumers() {
+    await new TicketUpdatedCunsomer(
+      await this.kafkaService.createConsumer(this.groupId),
+      (value, topic) => {
+        this.kafkaMessages.push({
+          topic,
+          value,
+        });
+      }
+    ).consume();
+
+    await new TicketCreatedCunsomer(
+      await this.kafkaService.createConsumer(this.groupId),
+      (value, topic) =>
+        this.kafkaMessages.push({
+          topic,
+          value,
+        })
+    ).consume();
   }
 
   async createUser() {

@@ -27,11 +27,11 @@ describe('tickets(GET) api/tickets', () => {
   });
 
   beforeEach(async () => {
-    helper.dropAllCollections();
+    await helper.dropAllCollections();
   });
 
   afterAll(async () => {
-    helper.closeConnection();
+    await helper.closeConnection();
   });
 
   it('can fetch a list of tickets and consist of meta for pagination info', async () => {

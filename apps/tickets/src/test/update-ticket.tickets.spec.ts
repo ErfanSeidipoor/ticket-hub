@@ -3,11 +3,14 @@ import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { UpdateTicketRequestTickets } from '@tickethub/dto';
 import { TICKET_NOT_FOUND } from '@tickethub/error';
+import { TopicsEnum } from '@tickethub/event';
 import { AppModule } from '@tickethub/tickets/app/app.module';
 import { setupApp } from '@tickethub/tickets/setup-app';
 import { Helper } from '@tickethub/tickets/test/helper';
-import { buildUrl } from '@tickethub/utils';
+import { buildUrl, sleep } from '@tickethub/utils';
 import request from 'supertest';
+
+jest.setTimeout(30000);
 
 const url = '/:ticketId';
 
@@ -24,14 +27,20 @@ describe('tickets(PUT) api/tickets/:ticketId', () => {
     setupApp(app);
     await app.init();
     helper = new Helper(app);
+    await helper.createKafkaConsumers();
   });
 
   beforeEach(async () => {
-    helper.dropAllCollections();
+    await helper.dropAllCollections();
+    helper.cleareMessages();
   });
 
   afterAll(async () => {
-    helper.closeConnection();
+    await helper.closeConnection();
+  });
+
+  afterEach(async () => {
+    await helper.cleareMessages();
   });
 
   it('returns a 403 if the user is not authenticated', async () => {
@@ -49,7 +58,7 @@ describe('tickets(PUT) api/tickets/:ticketId', () => {
       .expect(403);
   });
 
-  it('updates the ticket provided valid inputs', async () => {
+  it.only('updates the ticket provided valid inputs', async () => {
     const { userJwt, userId } = await helper.createUser();
     const { ticket } = await helper.createTicket({ userId });
 
@@ -64,6 +73,8 @@ describe('tickets(PUT) api/tickets/:ticketId', () => {
       .send(requestBody)
       .expect(200);
 
+    await sleep(5000);
+
     expect(response.body.title).toEqual(requestBody.title);
     expect(response.body.price).toEqual(requestBody.price);
 
@@ -73,6 +84,15 @@ describe('tickets(PUT) api/tickets/:ticketId', () => {
 
     expect(updatedTicket.title).toEqual(requestBody.title);
     expect(updatedTicket.price).toEqual(requestBody.price);
+
+    expect(helper.kafkaMessages).toHaveLength(1);
+    const ticketUpdatedEvent = helper.kafkaMessages[0];
+
+    expect(ticketUpdatedEvent.topic).toBe(TopicsEnum.ticket_updated);
+    expect(ticketUpdatedEvent.value.id).toBe(updatedTicket.id);
+    expect(ticketUpdatedEvent.value.title).toBe(updatedTicket.title);
+    expect(ticketUpdatedEvent.value.price).toBe(updatedTicket.price);
+    expect(ticketUpdatedEvent.value.userId).toBe(updatedTicket.userId);
   });
 
   it('returns a 404(TICKET_NOT_FOUND) if the user does not own the ticket', async () => {

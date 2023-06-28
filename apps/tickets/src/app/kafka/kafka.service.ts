@@ -3,6 +3,7 @@ import {
   OnApplicationShutdown,
   OnModuleInit,
 } from '@nestjs/common';
+import { TopicsEnum } from '@tickethub/event';
 import {
   Admin,
   Consumer,
@@ -20,22 +21,21 @@ export class KafkaService implements OnModuleInit, OnApplicationShutdown {
     brokers: [process.env.KAFKA_URL as string],
   });
 
-  public readonly requiredTopics = ['tickets-create-ticket'];
+  public readonly requiredTopics = [
+    TopicsEnum.ticket_created,
+    TopicsEnum.ticket_updated,
+  ];
 
   public readonly admin: Admin = this.kafka.admin();
 
   private readonly consumers: Consumer[] = [];
 
-  private readonly producer: Producer = this.kafka.producer({
+  public readonly producer: Producer = this.kafka.producer({
     createPartitioner: Partitioners.LegacyPartitioner,
   });
 
   async onModuleInit() {
-    const describeGroups = await this.admin.describeGroups([
-      process.env.KAFKA_GROUP,
-      'grounp-test',
-    ]);
-    console.log({ describeGroups });
+    await this.admin.describeGroups([process.env.KAFKA_GROUP, 'group-test']);
     await this.producer.connect();
     const topics = await this.admin.listTopics();
     for (const requiredTopic of this.requiredTopics) {
@@ -58,19 +58,11 @@ export class KafkaService implements OnModuleInit, OnApplicationShutdown {
     }
   }
 
-  async consume(
-    topics: ConsumerSubscribeTopics,
-    config: ConsumerRunConfig,
-    groupId?: string
-  ) {
-    const groupId_ = groupId || process.env.KAFKA_GROUP!;
-    console.log({ groupId_ });
+  async createConsumer(groupId?: string) {
     const cosumer: Consumer = this.kafka.consumer({
-      groupId: groupId_,
+      groupId: groupId || process.env.KAFKA_GROUP!,
     });
-    await cosumer.connect();
-    await cosumer.subscribe(topics);
-    await cosumer.run(config);
     this.consumers.push(cosumer);
+    return cosumer;
   }
 }

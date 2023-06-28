@@ -10,37 +10,51 @@ import { Ticket, TicketDocument } from '@tickethub/tickets/models';
 import { IPaginate, assignDefinedProps, paginate } from '@tickethub/utils';
 import { FilterQuery, Model } from 'mongoose';
 import { KafkaService } from '../kafka/kafka.service';
+import { TicketCreatedProducer, TicketUpdatedProducer } from '@tickethub/event';
+import { DBService } from '../db/db.service';
 
 @Injectable()
 export class TicketsService {
   constructor(
     @InjectModel(Ticket.name) private ticketModel: Model<Ticket>,
-    private readonly kafkaService: KafkaService
+    private readonly kafkaService: KafkaService,
+    private readonly dBServce: DBService
   ) {}
 
   async create(
     userId: string,
     { price, title }: CreateTicketRequestTickets
   ): Promise<TicketDocument> {
+    /* --------------------------------- change --------------------------------- */
+
     const ticket = new this.ticketModel({ title, price, userId });
 
-    const res = await this.kafkaService.produce({
-      topic: 'tickets-create-ticket',
-      messages: [
-        { key: userId, value: JSON.stringify({ title, price, userId }) },
-      ],
+    /* ---------------------------------- save ---------------------------------- */
+
+    await this.dBServce.transaction(async () => {
+      await ticket.save();
+      await new TicketCreatedProducer(this.kafkaService.producer).produce({
+        id: ticket.id,
+        userId,
+        title,
+        price,
+      });
     });
 
-    return ticket.save();
+    /* --------------------------------- return --------------------------------- */
+
+    return ticket;
   }
 
   async getById(ticketId: string): Promise<TicketDocument> {
+    /* ------------------------------- validation ------------------------------- */
     const ticket = await this.ticketModel.findOne({ _id: ticketId });
 
     if (!ticket) {
       throw new CustomError(TICKET_NOT_FOUND);
     }
 
+    /* --------------------------------- return --------------------------------- */
     return ticket;
   }
 
@@ -53,6 +67,7 @@ export class TicketsService {
       queryBuilder.userId = userId;
     }
 
+    /* --------------------------------- return --------------------------------- */
     return paginate(this.ticketModel, queryBuilder, page, limit);
   }
 
@@ -61,14 +76,33 @@ export class TicketsService {
     ticketId: string,
     body: UpdateTicketRequestTickets
   ): Promise<TicketDocument> {
+    const { price, title } = body;
+
+    /* ------------------------------- validation ------------------------------- */
+
     const ticket = await this.ticketModel.findOne({ _id: ticketId, userId });
 
     if (!ticket) {
       throw new CustomError(TICKET_NOT_FOUND);
     }
 
-    assignDefinedProps(ticket, body);
+    /* --------------------------------- change --------------------------------- */
 
-    return ticket.save();
+    assignDefinedProps(ticket, { price, title });
+
+    /* ---------------------------------- save ---------------------------------- */
+
+    await this.dBServce.transaction(async () => {
+      await ticket.save();
+      await new TicketUpdatedProducer(this.kafkaService.producer).produce({
+        id: ticket.id,
+        userId,
+        title,
+        price,
+      });
+    });
+
+    /* --------------------------------- return --------------------------------- */
+    return ticket;
   }
 }
