@@ -1,3 +1,4 @@
+import { OrderStatusEnum } from '@tickethub/enums';
 import { BasicCunsomer } from './basic-consumer';
 import { BasicProducer } from './basic-producer';
 import { TopicsEnum } from './topics.enum';

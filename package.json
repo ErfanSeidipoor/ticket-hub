@@ -8,6 +8,10 @@
     "tickets:test:req": "sh scripts/test.tickets.sh",
     "tickets:dev": "nx serve tickets",
     "tickets:test": "nx test tickets",
+    "orders:dev:req": "sh scripts/dev.orders.sh",
+    "orders:test:req": "sh scripts/test.orders.sh",
+    "orders:dev": "nx serve orders",
+    "orders:test": "nx test orders",
     "test:watch": "jest --watchAll",
     "test": "jest",
     "dev:tickets": "sh tickets.dev.sh"

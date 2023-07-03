@@ -1,1 +1,1 @@
-export * from './lib/enums';
+export * from './order-status.enum';
