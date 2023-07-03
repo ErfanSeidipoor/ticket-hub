@@ -19,6 +19,7 @@
       "@tickethub/auth/*": ["apps/auth/src/*"],
       "@tickethub/decorator": ["libs/decorator/src/index.ts"],
       "@tickethub/dto": ["libs/dto/src/index.ts"],
+      "@tickethub/enums": ["libs/enums/src/index.ts"],
       "@tickethub/error": ["libs/error/src/index.ts"],
       "@tickethub/event": ["libs/event/src/index.ts"],
       "@tickethub/guard": ["libs/guard/src/index.ts"],
