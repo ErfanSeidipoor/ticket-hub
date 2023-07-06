@@ -92,3 +92,7 @@ kubectl delete deployments --all
 kubectl delete services --all
 
 nx test tickets --skip-nx-cache --test-file="apps/tickets/src/test/create-ticket.tickets.spec.ts"
+
+kubectl get pods -w
+
+kubectl -n <namespace> get secret <name-of-secret> -o jsonpath="{.data.password}" | base64 -d

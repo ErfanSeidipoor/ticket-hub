@@ -14,7 +14,7 @@ import { TicketCreatedProducer, TicketUpdatedProducer } from '@tickethub/event';
 import { DBService } from '../db/db.service';
 
 @Injectable()
-export class TicketsService {
+export class OrdersService {
   constructor(
     @InjectModel(Ticket.name) private ticketModel: Model<Ticket>,
     private readonly kafkaService: KafkaService,

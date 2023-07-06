@@ -27,6 +27,7 @@
       "@tickethub/module": ["libs/module/src/index.ts"],
       "@tickethub/pipe": ["libs/pipe/src/index.ts"],
       "@tickethub/tickets/*": ["apps/tickets/src/*"],
+      "@tickethub/orders/*": ["apps/orders/src/*"],
       "@tickethub/utils": ["libs/utils/src/index.ts"]
     }
   },

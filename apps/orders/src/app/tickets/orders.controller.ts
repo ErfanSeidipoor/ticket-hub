@@ -16,42 +16,42 @@ import {
 } from '@tickethub/dto';
 import { Authenticated } from '@tickethub/guard';
 import { ParseMongoIdPipe } from '@tickethub/pipe';
-import { TicketsService } from './tickets.service';
+import { OrdersService } from './orders.service';
 
 @Controller()
-export class TicketsController {
-  constructor(private readonly ticketService: TicketsService) {}
+export class OrdersController {
+  constructor(private readonly orderService: OrdersService) {}
 
   @Get('/health')
   healthCheck() {
-    return '/api/tickets 🚀🚀';
+    return '/api/orders 🚀🚀';
   }
 
   @Post()
   @UseGuards(Authenticated)
   create(@UserId() userId: string, @Body() body: CreateTicketRequestTickets) {
-    return this.ticketService.create(userId, body);
+    return this.orderService.create(userId, body);
   }
 
-  @Get('/:ticketId')
+  @Get('/:orderId')
   @UseGuards(Authenticated)
-  getById(@Param('ticketId', new ParseMongoIdPipe()) ticketId: string) {
-    return this.ticketService.getById(ticketId);
+  getById(@Param('orderId', new ParseMongoIdPipe()) orderId: string) {
+    return this.orderService.getById(orderId);
   }
 
   @Get()
   @UseGuards(Authenticated)
   get(@Query() query: GetTicketsRequestTickets) {
-    return this.ticketService.get(query);
+    return this.orderService.get(query);
   }
 
-  @Put('/:ticketId')
+  @Put('/:orderId')
   @UseGuards(Authenticated)
   update(
     @UserId() userId: string,
-    @Param('ticketId', new ParseMongoIdPipe()) ticketId: string,
+    @Param('orderId', new ParseMongoIdPipe()) orderId: string,
     @Body() body: UpdateTicketRequestTickets
   ) {
-    return this.ticketService.update(userId, ticketId, body);
+    return this.orderService.update(userId, orderId, body);
   }
 }
