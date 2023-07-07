@@ -1,18 +1,17 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Post,
-  Put,
   Query,
   UseGuards,
 } from '@nestjs/common';
 import { UserId } from '@tickethub/decorator';
 import {
-  CreateTicketRequestTickets,
-  GetTicketsRequestTickets,
-  UpdateTicketRequestTickets,
+  CreateOrderRequestOrders,
+  GetOrdersRequestOrders,
 } from '@tickethub/dto';
 import { Authenticated } from '@tickethub/guard';
 import { ParseMongoIdPipe } from '@tickethub/pipe';
@@ -29,29 +28,31 @@ export class OrdersController {
 
   @Post()
   @UseGuards(Authenticated)
-  create(@UserId() userId: string, @Body() body: CreateTicketRequestTickets) {
+  create(@UserId() userId: string, @Body() body: CreateOrderRequestOrders) {
     return this.orderService.create(userId, body);
   }
 
   @Get('/:orderId')
   @UseGuards(Authenticated)
-  getById(@Param('orderId', new ParseMongoIdPipe()) orderId: string) {
-    return this.orderService.getById(orderId);
+  getById(
+    @UserId() userId: string,
+    @Param('orderId', new ParseMongoIdPipe()) orderId: string
+  ) {
+    return this.orderService.getById(userId, orderId);
   }
 
   @Get()
   @UseGuards(Authenticated)
-  get(@Query() query: GetTicketsRequestTickets) {
-    return this.orderService.get(query);
+  get(@UserId() userId: string, @Query() query: GetOrdersRequestOrders) {
+    return this.orderService.get(userId, query);
   }
 
-  @Put('/:orderId')
+  @Delete('/:orderId')
   @UseGuards(Authenticated)
-  update(
+  cancel(
     @UserId() userId: string,
-    @Param('orderId', new ParseMongoIdPipe()) orderId: string,
-    @Body() body: UpdateTicketRequestTickets
+    @Param('orderId', new ParseMongoIdPipe()) orderId: string
   ) {
-    return this.orderService.update(userId, orderId, body);
+    return this.orderService.cancel(userId, orderId);
   }
 }

@@ -1,6 +1,10 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
-import { Document, Types } from 'mongoose';
+import {
+  Document,
+  Types,
+  HydratedDocument,
+  Schema as MongooseSchema,
+} from 'mongoose';
 
 import { OrderStatusEnum } from '@tickethub/enums';
 import { Ticket } from './ticket.model';
@@ -22,7 +26,7 @@ export class Order extends Document {
   @Prop({ type: String, required: true })
   userId: string;
 
-  @Prop({ type: OrderStatusEnum, required: true })
+  @Prop({ type: String, enum: OrderStatusEnum, required: true })
   status: OrderStatusEnum;
 
   @Prop({ type: Date, default: Date.now })
@@ -34,7 +38,7 @@ export class Order extends Document {
   @Prop({ type: Date, default: Date.now })
   updatedAt: Date;
 
-  @Prop({ type: Types.ObjectId, ref: 'Ticket' })
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Ticket' })
   ticket: Ticket;
 }
 

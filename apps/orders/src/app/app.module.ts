@@ -1,5 +1,5 @@
 import { MiddlewareConsumer, Module } from '@nestjs/common';
-import { OrdersModule } from './tickets/orders.module';
+import { OrdersModule } from './orders/orders.module';
 import { KafkaModule } from './kafka/kafka.module';
 import { CurrentUserMiddleware } from '@tickethub/middleware';
 import { DBModule } from './db/db.module';

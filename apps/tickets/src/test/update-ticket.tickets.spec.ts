@@ -27,7 +27,7 @@ describe('tickets(PUT) api/tickets/:ticketId', () => {
     setupApp(app);
     await app.init();
     helper = new Helper(app);
-    await helper.createKafkaConsumers();
+    await helper.createTicketUpdatedCunsomer();
   });
 
   beforeEach(async () => {

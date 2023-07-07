@@ -1,13 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
-import { Order } from '@tickethub/orders/models';
+import { Order, Ticket } from '@tickethub/orders/models';
 import { Connection, Model } from 'mongoose';
 
 @Injectable()
 export class DBService {
   constructor(
     @InjectConnection() public readonly connection: Connection,
-    @InjectModel(Order.name) public ticketModel: Model<Order>
+    @InjectModel(Ticket.name) public ticketModel: Model<Ticket>,
+    @InjectModel(Order.name) public orderModel: Model<Order>
   ) {}
 
   async transaction(fn: () => Promise<void>) {
