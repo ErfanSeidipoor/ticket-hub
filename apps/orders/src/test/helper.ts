@@ -1,22 +1,17 @@
 import { faker } from '@faker-js/faker';
 import { INestApplication } from '@nestjs/common';
+import { OrderStatusEnum } from '@tickethub/enums';
 import {
-  BasicCunsomer,
   OrderCancelledCunsomer,
   OrderCancelledEvent,
   OrderCreatedCunsomer,
   OrderCreatedEvent,
 } from '@tickethub/event';
-import {
-  OrderDocument,
-  Ticket,
-  TicketDocument,
-} from '@tickethub/orders/models';
+import { OrderDocument, TicketDocument } from '@tickethub/orders/models';
 import { JwtToken } from '@tickethub/utils';
 import jwt from 'jsonwebtoken';
 import { DBService } from '../app/db/db.service';
 import { KafkaService } from '../app/kafka/kafka.service';
-import { OrderStatusEnum } from '@tickethub/enums';
 
 export class Helper {
   DBservice: DBService;

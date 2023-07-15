@@ -93,7 +93,7 @@ kubectl delete services --all
 
 nx test tickets --skip-nx-cache --test-file="apps/tickets/src/test/create-ticket.tickets.spec.ts"
 
-nx test orders --skip-nx-cache --test-file="apps/orders/src/test/create-order.orders.spec.ts"
+nx test orders --skip-nx-cache --test-file="apps/orders/src/test/consumers/ticket-created.consumer.spec.ts"
 
 kubectl get pods -w
 

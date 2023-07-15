@@ -4,7 +4,7 @@ import { KafkaModule } from '../kafka/kafka.module';
 import { Ticket, TicketSchema } from '../../models';
 import { TicketsController } from './tickets.controller';
 import { TicketsService } from './tickets.service';
-import { Consumers } from './cusnomers';
+import { consumers } from './consumers';
 import { DBModule } from '../db/db.module';
 
 @Module({
@@ -13,7 +13,7 @@ import { DBModule } from '../db/db.module';
     DBModule,
     MongooseModule.forFeature([{ name: Ticket.name, schema: TicketSchema }]),
   ],
-  providers: [TicketsService, ...Consumers],
+  providers: [TicketsService, ...consumers],
   exports: [TicketsService],
   controllers: [TicketsController],
 })

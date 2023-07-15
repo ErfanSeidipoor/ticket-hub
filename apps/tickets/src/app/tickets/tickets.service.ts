@@ -96,7 +96,6 @@ export class TicketsService {
       await ticket.save();
       await new TicketUpdatedProducer(this.kafkaService.producer).produce({
         id: ticket.id,
-        userId,
         title,
         price,
       });
