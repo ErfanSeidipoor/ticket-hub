@@ -46,7 +46,7 @@ describe('orders(GET) api/orders/:orderId', () => {
     expect(response.body.status).toEqual(order.status);
   });
 
-  it('fails 404(ORDER_NOT_FOUND) if the order is not found', async () => {
+  it('fails 404(ORDER_NOT_FOUND) if the order not found', async () => {
     const { userJwt } = await helper.createUser();
     await helper.createTicket({});
 

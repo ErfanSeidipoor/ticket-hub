@@ -1,4 +1,4 @@
-import { Producer as KafkaProducer } from 'kafkajs';
+import { Producer as KafkaProducer, RecordMetadata } from 'kafkajs';
 import { TopicsEnum } from './topics.enum';
 
 interface Event {
@@ -14,8 +14,8 @@ export abstract class BasicProducer<T extends Event> {
     this.kafkaProducer = kafkaProducer;
   }
 
-  async produce(value: T['value'], key?: string): Promise<void> {
-    await this.kafkaProducer.send({
+  async produce(value: T['value'], key?: string): Promise<RecordMetadata[]> {
+    return await this.kafkaProducer.send({
       topic: this.topic,
       messages: [{ value: JSON.stringify(value), key }],
     });

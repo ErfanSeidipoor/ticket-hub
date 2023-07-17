@@ -46,7 +46,7 @@ describe('tickets(GET) api/tickets/:ticketId', () => {
     expect(response.body.title).toEqual(ticket.title);
   });
 
-  it('fails 404(TICKET_NOT_FOUND) the ticket is not found', async () => {
+  it('fails 404(TICKET_NOT_FOUND) the ticket not found', async () => {
     const { userJwt } = await helper.createUser();
     await helper.createTicket({});
 

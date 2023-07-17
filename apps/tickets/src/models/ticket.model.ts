@@ -29,6 +29,9 @@ export class Ticket extends Document {
 
   @Prop({ type: String, required: true })
   userId: string;
+
+  @Prop({ type: String, required: false })
+  orderId: string;
 }
 
 export const TicketSchema = SchemaFactory.createForClass(Ticket);

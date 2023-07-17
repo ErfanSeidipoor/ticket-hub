@@ -1,7 +1,7 @@
-import { TicketCreatedCunsomerHandler } from './ticket-created.consumer';
-import { TicketUpdatedCunsomerHandler } from './ticket-updated.consumer';
+import { OrderCreatedCunsomerHandler } from './order-created.consumer';
+import { OrderCancelledCunsomerHandler } from './order-updated.consumer';
 
 export const consumers = [
-  TicketCreatedCunsomerHandler,
-  TicketUpdatedCunsomerHandler,
+  OrderCreatedCunsomerHandler,
+  // OrderCancelledCunsomerHandler,
 ];

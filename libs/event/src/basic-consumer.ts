@@ -19,19 +19,31 @@ export abstract class BasicCunsomer<T extends Event> {
       data: T['value'],
       topic: T['topic'],
       payload: EachMessagePayload
-    ) => void
+    ) => Promise<void>
   ) {}
 
   async consume() {
     await this.kafkaConsumer.connect();
-    await this.kafkaConsumer.subscribe({ topics: [this.topic] });
+    await this.kafkaConsumer.subscribe({
+      topics: [this.topic],
+      fromBeginning: false,
+    });
     await this.kafkaConsumer.run({
+      autoCommit: false,
       eachMessage: async (payload: EachMessagePayload) => {
-        this.onMessage(
+        await this.onMessage(
           this.parseMessage(payload.message),
           payload.topic as T['topic'],
           payload
         );
+
+        await this.kafkaConsumer.commitOffsets([
+          {
+            topic: payload.topic,
+            partition: payload.partition,
+            offset: (Number(payload.message.offset) + 1).toString(),
+          },
+        ]);
       },
     });
   }
