@@ -12,9 +12,9 @@ export interface TicketCreatedEvent {
   };
 }
 
-export class TicketCreatedCunsomer extends BasicCunsomer<TicketCreatedEvent> {
-  topic: TopicsEnum.ticket_created = TopicsEnum.ticket_created;
-}
+// export class TicketCreatedCunsomer extends BasicCunsomer<TicketCreatedEvent> {
+//   topic: TopicsEnum.ticket_created = TopicsEnum.ticket_created;
+// }
 
 export class TicketCreatedProducer extends BasicProducer<TicketCreatedEvent> {
   topic: TopicsEnum.ticket_created = TopicsEnum.ticket_created;

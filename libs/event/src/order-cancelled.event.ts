@@ -12,9 +12,9 @@ export interface OrderCancelledEvent {
   };
 }
 
-export class OrderCancelledCunsomer extends BasicCunsomer<OrderCancelledEvent> {
-  topic: TopicsEnum.order_cancelled = TopicsEnum.order_cancelled;
-}
+// export class OrderCancelledCunsomer extends BasicCunsomer<OrderCancelledEvent> {
+//   topic: TopicsEnum.order_cancelled = TopicsEnum.order_cancelled;
+// }
 
 export class OrderCancelledProducer extends BasicProducer<OrderCancelledEvent> {
   topic: TopicsEnum.order_cancelled = TopicsEnum.order_cancelled;

@@ -10,30 +10,32 @@ interface Event {
   value: any;
 }
 
-export abstract class BasicCunsomer<T extends Event> {
-  abstract topic: T['topic'];
+export abstract class BasicCunsomer<E extends Event[]> {
+  abstract topics: E[number]['topic'][];
 
   constructor(
     private kafkaConsumer: KafkaConsumer,
-    private onMessage: (
-      data: T['value'],
-      topic: T['topic'],
-      payload: EachMessagePayload
-    ) => Promise<void>
+    private onMessages: {
+      [key in E[number]['topic']]: (
+        data: E[number]['value'],
+        topic: E[number]['topic'],
+        payload: EachMessagePayload
+      ) => Promise<void>;
+    }
   ) {}
 
   async consume() {
     await this.kafkaConsumer.connect();
     await this.kafkaConsumer.subscribe({
-      topics: [this.topic],
+      topics: this.topics,
       fromBeginning: false,
     });
     await this.kafkaConsumer.run({
       autoCommit: false,
       eachMessage: async (payload: EachMessagePayload) => {
-        await this.onMessage(
+        await this.onMessages[payload.topic](
           this.parseMessage(payload.message),
-          payload.topic as T['topic'],
+          payload.topic as Event['topic'],
           payload
         );
 
@@ -48,7 +50,7 @@ export abstract class BasicCunsomer<T extends Event> {
     });
   }
 
-  parseMessage(kafkaMessage: KafkaMessage): T['value'] {
+  parseMessage(kafkaMessage: KafkaMessage): Event['value'] {
     return JSON.parse(kafkaMessage.value.toString());
   }
 }

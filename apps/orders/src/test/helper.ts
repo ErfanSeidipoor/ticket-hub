@@ -2,9 +2,9 @@ import { faker } from '@faker-js/faker';
 import { INestApplication } from '@nestjs/common';
 import { OrderStatusEnum } from '@tickethub/enums';
 import {
-  OrderCancelledCunsomer,
+  // OrderCancelledCunsomer,
   OrderCancelledEvent,
-  OrderCreatedCunsomer,
+  // OrderCreatedCunsomer,
   OrderCreatedEvent,
 } from '@tickethub/event';
 import { OrderDocument, TicketDocument } from '@tickethub/orders/models';
@@ -44,25 +44,25 @@ export class Helper {
   }
 
   async createOrderCreatedCunsomer() {
-    await new OrderCreatedCunsomer(
-      await this.kafkaService.createConsumer(this.groupId),
-      (value, topic) =>
-        this.kafkaMessages.push({
-          topic,
-          value,
-        })
-    ).consume();
+    // await new OrderCreatedCunsomer(
+    //   await this.kafkaService.createConsumer(this.groupId),
+    //   (value, topic) =>
+    //     this.kafkaMessages.push({
+    //       topic,
+    //       value,
+    //     })
+    // ).consume();
   }
 
   async createOrderCancelledCunsomer() {
-    await new OrderCancelledCunsomer(
-      await this.kafkaService.createConsumer(this.groupId),
-      (value, topic) =>
-        this.kafkaMessages.push({
-          topic,
-          value,
-        })
-    ).consume();
+    // await new OrderCancelledCunsomer(
+    //   await this.kafkaService.createConsumer(this.groupId),
+    //   (value, topic) =>
+    //     this.kafkaMessages.push({
+    //       topic,
+    //       value,
+    //     })
+    // ).consume();
   }
 
   async createUser() {

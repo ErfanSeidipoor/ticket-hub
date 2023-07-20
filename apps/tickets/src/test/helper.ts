@@ -1,16 +1,23 @@
 import { faker } from '@faker-js/faker';
 import { INestApplication } from '@nestjs/common';
 import {
-  TicketCreatedCunsomer,
+  BasicCunsomer,
   TicketCreatedEvent,
-  TicketUpdatedCunsomer,
   TicketUpdatedEvent,
+  TopicsEnum,
 } from '@tickethub/event';
 import { TicketDocument } from '@tickethub/orders/models';
 import { JwtToken } from '@tickethub/utils';
 import jwt from 'jsonwebtoken';
 import { DBService } from '../app/db/db.service';
 import { KafkaService } from '../app/kafka/kafka.service';
+
+export class TicketCreatedCunsomer extends BasicCunsomer<[TicketCreatedEvent]> {
+  topics: [TopicsEnum.ticket_created] = [TopicsEnum.ticket_created];
+}
+export class TicketUpdatedCunsomer extends BasicCunsomer<[TicketUpdatedEvent]> {
+  topics: [TopicsEnum.ticket_updated] = [TopicsEnum.ticket_updated];
+}
 
 export class Helper {
   DBservice: DBService;
@@ -66,11 +73,13 @@ export class Helper {
   async createTicketUpdatedCunsomer() {
     await new TicketUpdatedCunsomer(
       await this.kafkaService.createConsumer(this.groupId),
-      async (value, topic) => {
-        this.kafkaMessages.push({
-          topic,
-          value,
-        });
+      {
+        [TopicsEnum.ticket_updated]: async (value, topic) => {
+          this.kafkaMessages.push({
+            topic,
+            value,
+          });
+        },
       }
     ).consume();
   }
@@ -78,11 +87,13 @@ export class Helper {
   async createTicketCreatedCunsomer() {
     await new TicketCreatedCunsomer(
       await this.kafkaService.createConsumer(this.groupId),
-      async (value, topic) => {
-        this.kafkaMessages.push({
-          topic,
-          value,
-        });
+      {
+        [TopicsEnum.ticket_created]: async (value, topic) => {
+          this.kafkaMessages.push({
+            topic,
+            value,
+          });
+        },
       }
     ).consume();
   }

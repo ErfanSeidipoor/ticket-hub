@@ -59,7 +59,10 @@ export class KafkaService implements OnModuleInit, OnApplicationShutdown {
   }
 
   async createConsumer(groupId?: string) {
-    const cosumer: Consumer = this.kafka.consumer({
+    const kafka = new Kafka({
+      brokers: [process.env.KAFKA_URL as string],
+    });
+    const cosumer: Consumer = kafka.consumer({
       groupId: groupId || process.env.KAFKA_GROUP!,
     });
     this.consumers.push(cosumer);
