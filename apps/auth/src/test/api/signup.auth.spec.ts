@@ -4,7 +4,7 @@ import { faker } from '@faker-js/faker';
 import request from 'supertest';
 import { AppModule } from '@tickethub/auth/app/app.module';
 import { setupApp } from '@tickethub/auth/setup-app';
-import { Helper } from '@tickethub/auth/test/helper';
+import { HelperDB } from '@tickethub/auth/test/helper.db';
 import { SignupRequestAuth } from '@tickethub/dto';
 import { Jwt } from '@tickethub/utils';
 import { EMAIL_ALREADY_EXISTS } from '@tickethub/error';
@@ -13,7 +13,7 @@ const url = '/signup';
 
 describe('auth(POST) api/auth/signup', () => {
   let app: INestApplication;
-  let helper: Helper;
+  let helperDB: HelperDB;
   let requestBody: SignupRequestAuth;
 
   beforeAll(async () => {
@@ -23,15 +23,15 @@ describe('auth(POST) api/auth/signup', () => {
     app = module.createNestApplication();
     setupApp(app);
     await app.init();
-    helper = new Helper(app);
+    helperDB = new HelperDB(app);
   });
 
   beforeEach(async () => {
-    helper.dropAllCollections();
+    helperDB.dropAllCollections();
   });
 
   afterAll(async () => {
-    helper.closeConnection();
+    helperDB.closeConnection();
   });
 
   it('returns 201 on successful', async () => {
@@ -71,7 +71,7 @@ describe('auth(POST) api/auth/signup', () => {
       password: faker.internet.password(),
     };
 
-    await helper.createUser({ email: requestBody.email });
+    await helperDB.createUser({ email: requestBody.email });
 
     const response = await request(app.getHttpServer())
       .post(url)

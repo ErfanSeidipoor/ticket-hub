@@ -7,8 +7,6 @@ import { TopicsEnum } from '@tickethub/event';
 import {
   Admin,
   Consumer,
-  ConsumerRunConfig,
-  ConsumerSubscribeTopics,
   Kafka,
   Partitioners,
   Producer,
@@ -24,6 +22,8 @@ export class KafkaService implements OnModuleInit, OnApplicationShutdown {
   public readonly requiredTopics = [
     TopicsEnum.ticket_created,
     TopicsEnum.ticket_updated,
+    TopicsEnum.order_created,
+    TopicsEnum.order_cancelled,
   ];
 
   public readonly admin: Admin = this.kafka.admin();

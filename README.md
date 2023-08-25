@@ -91,10 +91,12 @@ kubectl delete pods --all
 kubectl delete deployments --all
 kubectl delete services --all
 
-nx test tickets --skip-nx-cache --test-file="apps/tickets/src/test/create-ticket.tickets.spec.ts"
+nx test tickets --skip-nx-cach --runInBand
+nx test tickets --skip-nx-cache --test-file="apps/tickets/src/test/consumers/order-created.consumer.spec.ts"
+nx test tickets --skip-nx-cache --test-file="apps/tickets/src/test/api/create-ticket.tickets.spec.ts"
 
-nx test orders --skip-nx-cache --test-file="apps/orders/src/test/consumers/ticket-created.consumer.spec.ts"
-
+nx test orders --skip-nx-cache --test-file=""
+nx test auth --skip-nx-cache --test-file=""
 kubectl get pods -w
 
 kubectl -n <namespace> get secret <name-of-secret> -o jsonpath="{.data.password}" | base64 -d

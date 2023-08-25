@@ -4,7 +4,7 @@ import { faker } from '@faker-js/faker';
 import request from 'supertest';
 import { AppModule } from '@tickethub/orders/app/app.module';
 import { setupApp } from '@tickethub/orders/setup-app';
-import { Helper } from '@tickethub/orders/test/helper';
+import { HelperDB } from '../helper.db';
 import { buildUrl } from '@tickethub/utils';
 import { ORDER_NOT_FOUND } from '@tickethub/error';
 
@@ -12,7 +12,7 @@ const url = '/:orderId';
 
 describe('orders(GET) api/orders/:orderId', () => {
   let app: INestApplication;
-  let helper: Helper;
+  let helperDB: HelperDB;
 
   beforeAll(async () => {
     const module = await Test.createTestingModule({
@@ -21,21 +21,22 @@ describe('orders(GET) api/orders/:orderId', () => {
     app = module.createNestApplication();
     setupApp(app);
     await app.init();
-    helper = new Helper(app);
+
+    helperDB = new HelperDB(app);
   });
 
   beforeEach(async () => {
-    await helper.dropAllCollections();
+    await helperDB.dropAllCollections();
   });
 
   afterAll(async () => {
-    await helper.closeConnection();
+    await helperDB.closeConnection();
   });
 
   it('returns the order if the order is found', async () => {
-    const { userJwt, userId } = await helper.createUser();
-    const { ticket } = await helper.createTicket({});
-    const { order } = await helper.createOrder({ ticket, userId });
+    const { userJwt, userId } = await helperDB.createUser();
+    const { ticket } = await helperDB.createTicket({});
+    const { order } = await helperDB.createOrder({ ticket, userId });
 
     const response = await request(app.getHttpServer())
       .get(buildUrl(url, { orderId: order.id }))
@@ -47,8 +48,8 @@ describe('orders(GET) api/orders/:orderId', () => {
   });
 
   it('fails 404(ORDER_NOT_FOUND) if the order not found', async () => {
-    const { userJwt } = await helper.createUser();
-    await helper.createTicket({});
+    const { userJwt } = await helperDB.createUser();
+    await helperDB.createTicket({});
 
     const response = await request(app.getHttpServer())
       .get(buildUrl(url, { orderId: faker.database.mongodbObjectId() }))
@@ -64,10 +65,10 @@ describe('orders(GET) api/orders/:orderId', () => {
   });
 
   it('fails 404(ORDER_NOT_FOUND) if the order is not for that user', async () => {
-    const { userJwt } = await helper.createUser();
-    const { userId } = await helper.createUser();
-    const { ticket } = await helper.createTicket({});
-    const { order } = await helper.createOrder({ ticket, userId });
+    const { userJwt } = await helperDB.createUser();
+    const { userId } = await helperDB.createUser();
+    const { ticket } = await helperDB.createTicket({});
+    const { order } = await helperDB.createOrder({ ticket, userId });
 
     const response = await request(app.getHttpServer())
       .get(buildUrl(url, { orderId: order.id }))

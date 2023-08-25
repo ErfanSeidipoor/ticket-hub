@@ -1,28 +1,16 @@
 import { faker } from '@faker-js/faker';
 import { INestApplication } from '@nestjs/common';
 import { OrderStatusEnum } from '@tickethub/enums';
-import {
-  // OrderCancelledCunsomer,
-  OrderCancelledEvent,
-  // OrderCreatedCunsomer,
-  OrderCreatedEvent,
-} from '@tickethub/event';
 import { OrderDocument, TicketDocument } from '@tickethub/orders/models';
 import { JwtToken } from '@tickethub/utils';
 import jwt from 'jsonwebtoken';
 import { DBService } from '../app/db/db.service';
-import { KafkaService } from '../app/kafka/kafka.service';
 
-export class Helper {
+export class HelperDB {
   DBservice: DBService;
-  kafkaService: KafkaService;
-  kafkaMessages: (OrderCreatedEvent | OrderCancelledEvent)[] = [];
-  groupId = 'group-test';
 
   constructor(public app: INestApplication) {
     this.DBservice = app.get<DBService>(DBService);
-    this.kafkaService = app.get<KafkaService>(KafkaService);
-    this.kafkaMessages = [];
   }
 
   async closeConnection() {
@@ -37,32 +25,6 @@ export class Helper {
     for (const key in collections) {
       await collections[key].deleteMany({});
     }
-  }
-
-  cleareMessages() {
-    this.kafkaMessages = [];
-  }
-
-  async createOrderCreatedCunsomer() {
-    // await new OrderCreatedCunsomer(
-    //   await this.kafkaService.createConsumer(this.groupId),
-    //   (value, topic) =>
-    //     this.kafkaMessages.push({
-    //       topic,
-    //       value,
-    //     })
-    // ).consume();
-  }
-
-  async createOrderCancelledCunsomer() {
-    // await new OrderCancelledCunsomer(
-    //   await this.kafkaService.createConsumer(this.groupId),
-    //   (value, topic) =>
-    //     this.kafkaMessages.push({
-    //       topic,
-    //       value,
-    //     })
-    // ).consume();
   }
 
   async createUser() {

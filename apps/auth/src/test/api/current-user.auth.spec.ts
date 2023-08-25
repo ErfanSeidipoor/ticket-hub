@@ -2,15 +2,14 @@ import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { AppModule } from '@tickethub/auth/app/app.module';
 import { setupApp } from '@tickethub/auth/setup-app';
-import { Helper } from '@tickethub/auth/test/helper';
+import { HelperDB } from '@tickethub/auth/test/helper.db';
 import request from 'supertest';
-import { Jwt } from '@tickethub/utils';
 
-const url = '/signout';
+const url = '/current-user';
 
-describe('auth(GET) api/auth/signout', () => {
+describe('auth(GET) api/auth/current-user', () => {
   let app: INestApplication;
-  let helper: Helper;
+  let helperDB: HelperDB;
 
   beforeAll(async () => {
     const module = await Test.createTestingModule({
@@ -19,25 +18,31 @@ describe('auth(GET) api/auth/signout', () => {
     app = module.createNestApplication();
     setupApp(app);
     await app.init();
-    helper = new Helper(app);
+    helperDB = new HelperDB(app);
   });
 
   beforeEach(async () => {
-    helper.dropAllCollections();
+    helperDB.dropAllCollections();
   });
 
   afterAll(async () => {
-    helper.closeConnection();
+    helperDB.closeConnection();
   });
 
-  it('returns 201 on successful', async () => {
-    const { userJwt } = await helper.createUser({});
+  it('returns 200 on successful', async () => {
+    const { user, userJwt } = await helperDB.createUser({});
     const response = await request(app.getHttpServer())
       .get(url)
       .set('Cookie', [`jwt=${userJwt}`])
       .expect(200);
 
-    const Verified = Jwt.getVerifiedFromCookie(response.get('Set-Cookie'));
-    expect(Verified).toBeUndefined();
+    const { email, id } = response.body;
+    expect(email).toBe(user.email);
+    expect(id).toBe(user.id);
+  });
+
+  it('responds with null if not authenticated', async () => {
+    await helperDB.createUser({});
+    await request(app.getHttpServer()).get(url).expect(403);
   });
 });

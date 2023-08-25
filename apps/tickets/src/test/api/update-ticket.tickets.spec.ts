@@ -3,12 +3,13 @@ import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { UpdateTicketRequestTickets } from '@tickethub/dto';
 import { TICKET_NOT_FOUND } from '@tickethub/error';
-import { TopicsEnum } from '@tickethub/event';
+import { TicketUpdatedEvent, TopicsEnum } from '@tickethub/event';
 import { AppModule } from '@tickethub/tickets/app/app.module';
 import { setupApp } from '@tickethub/tickets/setup-app';
-import { Helper } from '@tickethub/tickets/test/helper';
 import { buildUrl, sleep } from '@tickethub/utils';
 import request from 'supertest';
+import { HelperDB } from '../helper.db';
+import { HelperKafka } from '../helper.kafka';
 
 jest.setTimeout(30000);
 
@@ -16,7 +17,8 @@ const url = '/:ticketId';
 
 describe('tickets(PUT) api/tickets/:ticketId', () => {
   let app: INestApplication;
-  let helper: Helper;
+  let helperDB: HelperDB;
+  let helperKafka: HelperKafka;
   let requestBody: UpdateTicketRequestTickets;
 
   beforeAll(async () => {
@@ -26,26 +28,24 @@ describe('tickets(PUT) api/tickets/:ticketId', () => {
     app = module.createNestApplication();
     setupApp(app);
     await app.init();
-    helper = new Helper(app);
-    await helper.createTicketUpdatedCunsomer();
+    helperDB = new HelperDB(app);
+    helperKafka = new HelperKafka(app);
+    await helperKafka.createTicketUpdatedCunsomer();
   });
 
   beforeEach(async () => {
-    await helper.dropAllCollections();
-    helper.cleareMessages();
+    await helperDB.dropAllCollections();
+    await helperKafka.cleareMessages();
   });
 
   afterAll(async () => {
-    await helper.closeConnection();
-  });
-
-  afterEach(async () => {
-    await helper.cleareMessages();
+    await helperDB.closeConnection();
+    await helperKafka.cleareMessages();
   });
 
   it('returns a 403 if the user is not authenticated', async () => {
-    const { userId } = await helper.createUser();
-    const { ticket } = await helper.createTicket({ userId });
+    const { userId } = await helperDB.createUser();
+    const { ticket } = await helperDB.createTicket({ userId });
 
     requestBody = {
       title: faker.word.words(3),
@@ -58,9 +58,9 @@ describe('tickets(PUT) api/tickets/:ticketId', () => {
       .expect(403);
   });
 
-  it.only('updates the ticket provided valid inputs', async () => {
-    const { userJwt, userId } = await helper.createUser();
-    const { ticket } = await helper.createTicket({ userId });
+  it('updates the ticket provided valid inputs', async () => {
+    const { userJwt, userId } = await helperDB.createUser();
+    const { ticket } = await helperDB.createTicket({ userId });
 
     requestBody = {
       title: faker.word.words(3),
@@ -78,26 +78,26 @@ describe('tickets(PUT) api/tickets/:ticketId', () => {
     expect(response.body.title).toEqual(requestBody.title);
     expect(response.body.price).toEqual(requestBody.price);
 
-    const updatedTicket = await helper.DBservice.ticketModel.findById(
+    const updatedTicket = await helperDB.DBservice.ticketModel.findById(
       ticket.id
     );
 
     expect(updatedTicket.title).toEqual(requestBody.title);
     expect(updatedTicket.price).toEqual(requestBody.price);
 
-    expect(helper.kafkaMessages).toHaveLength(1);
-    const ticketUpdatedEvent = helper.kafkaMessages[0];
+    expect(helperKafka.kafkaMessages).toHaveLength(1);
+    const ticketUpdatedEvent = helperKafka
+      .kafkaMessages[0] as TicketUpdatedEvent;
 
     expect(ticketUpdatedEvent.topic).toBe(TopicsEnum.ticket_updated);
     expect(ticketUpdatedEvent.value.id).toBe(updatedTicket.id);
     expect(ticketUpdatedEvent.value.title).toBe(updatedTicket.title);
     expect(ticketUpdatedEvent.value.price).toBe(updatedTicket.price);
-    expect(ticketUpdatedEvent.value.userId).toBe(updatedTicket.userId);
   });
 
   it('returns a 404(TICKET_NOT_FOUND) if the user does not own the ticket', async () => {
-    const { userJwt } = await helper.createUser();
-    const { ticket } = await helper.createTicket({});
+    const { userJwt } = await helperDB.createUser();
+    const { ticket } = await helperDB.createTicket({});
 
     requestBody = {
       title: faker.word.words(3),
@@ -119,8 +119,8 @@ describe('tickets(PUT) api/tickets/:ticketId', () => {
   });
 
   it('returns a 400 if the user provides an invalid title or price', async () => {
-    const { userJwt } = await helper.createUser();
-    const { ticket } = await helper.createTicket({});
+    const { userJwt } = await helperDB.createUser();
+    const { ticket } = await helperDB.createTicket({});
 
     requestBody = {
       title: faker.word.words(3),

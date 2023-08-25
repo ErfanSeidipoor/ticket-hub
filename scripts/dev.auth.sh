@@ -1,0 +1,1 @@
+kubectl apply -f ./infra/k8s.dev/auth-mongo.deployment.yaml

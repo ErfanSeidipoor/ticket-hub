@@ -12,6 +12,10 @@
     "orders:test:req": "sh scripts/test.orders.sh",
     "orders:dev": "nx serve orders",
     "orders:test": "nx test orders",
+    "auth:dev:req": "sh scripts/dev.auth.sh",
+    "auth:test:req": "sh scripts/test.auth.sh",
+    "auth:dev": "nx serve auth",
+    "auth:test": "nx test auth",
     "test:watch": "jest --watchAll",
     "test": "jest",
     "dev:tickets": "sh tickets.dev.sh"

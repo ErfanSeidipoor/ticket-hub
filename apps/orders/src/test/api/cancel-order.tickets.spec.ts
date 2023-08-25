@@ -3,11 +3,12 @@ import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { UpdateTicketRequestTickets } from '@tickethub/dto';
 import { OrderStatusEnum } from '@tickethub/enums';
-import { ORDER_NOT_FOUND, TICKET_NOT_FOUND } from '@tickethub/error';
+import { ORDER_NOT_FOUND } from '@tickethub/error';
 import { OrderCancelledEvent, TopicsEnum } from '@tickethub/event';
 import { AppModule } from '@tickethub/orders/app/app.module';
 import { setupApp } from '@tickethub/orders/setup-app';
-import { Helper } from '@tickethub/orders/test/helper';
+import { HelperDB } from '../helper.db';
+import { HelperKafka } from '../helper.kafka';
 import { buildUrl, sleep } from '@tickethub/utils';
 import request from 'supertest';
 
@@ -17,7 +18,8 @@ const url = '/:orderId';
 
 describe('orders(PUT) api/orders/:orderId', () => {
   let app: INestApplication;
-  let helper: Helper;
+  let helperDB: HelperDB;
+  let helperKafka: HelperKafka;
   let requestBody: UpdateTicketRequestTickets;
 
   beforeAll(async () => {
@@ -27,27 +29,27 @@ describe('orders(PUT) api/orders/:orderId', () => {
     app = module.createNestApplication();
     setupApp(app);
     await app.init();
-    helper = new Helper(app);
-    await helper.createOrderCancelledCunsomer();
+
+    helperDB = new HelperDB(app);
+    helperKafka = new HelperKafka(app);
+
+    await helperKafka.createOrderCancelledCunsomer();
   });
 
   beforeEach(async () => {
-    await helper.dropAllCollections();
-    helper.cleareMessages();
+    await helperDB.dropAllCollections();
+    await helperKafka.cleareMessages();
   });
 
   afterAll(async () => {
-    await helper.closeConnection();
-  });
-
-  afterEach(async () => {
-    await helper.cleareMessages();
+    await helperDB.closeConnection();
+    await helperKafka.cleareMessages();
   });
 
   it('returns a 403 if the user is not authenticated', async () => {
-    const { userId } = await helper.createUser();
-    const { ticket } = await helper.createTicket({});
-    await helper.createOrder({ ticket, userId });
+    const { userId } = await helperDB.createUser();
+    const { ticket } = await helperDB.createTicket({});
+    await helperDB.createOrder({ ticket, userId });
 
     await request(app.getHttpServer())
       .delete(buildUrl(url, { ticketId: ticket.id }))
@@ -56,9 +58,9 @@ describe('orders(PUT) api/orders/:orderId', () => {
   });
 
   it('updates the ticket provided valid inputs', async () => {
-    const { userJwt, userId } = await helper.createUser();
-    const { ticket } = await helper.createTicket({});
-    const { order } = await helper.createOrder({ ticket, userId });
+    const { userJwt, userId } = await helperDB.createUser();
+    const { ticket } = await helperDB.createTicket({});
+    const { order } = await helperDB.createOrder({ ticket, userId });
 
     const response = await request(app.getHttpServer())
       .delete(buildUrl(url, { orderId: order.id }))
@@ -68,11 +70,12 @@ describe('orders(PUT) api/orders/:orderId', () => {
 
     await sleep(5000);
 
-    const updatedOrder = await helper.DBservice.orderModel.findById(order.id);
+    const updatedOrder = await helperDB.DBservice.orderModel.findById(order.id);
     expect(updatedOrder.status).toEqual(OrderStatusEnum.cancelled);
 
-    expect(helper.kafkaMessages).toHaveLength(1);
-    const orderCancelledEvent = helper.kafkaMessages[0] as OrderCancelledEvent;
+    expect(helperKafka.kafkaMessages).toHaveLength(1);
+    const orderCancelledEvent = helperKafka
+      .kafkaMessages[0] as OrderCancelledEvent;
 
     expect(orderCancelledEvent.topic).toBe(TopicsEnum.order_cancelled);
     expect(orderCancelledEvent.value.id).toBe(order.id);
@@ -80,7 +83,7 @@ describe('orders(PUT) api/orders/:orderId', () => {
   });
 
   it('returns a 404(ORDER_NOT_FOUND) if orderId is incorrect', async () => {
-    const { userJwt } = await helper.createUser();
+    const { userJwt } = await helperDB.createUser();
 
     const response = await request(app.getHttpServer())
       .delete(buildUrl(url, { orderId: faker.database.mongodbObjectId() }))
@@ -97,9 +100,9 @@ describe('orders(PUT) api/orders/:orderId', () => {
   });
 
   it('returns a 404(ORDER_NOT_FOUND) if the user does not own the ticket', async () => {
-    const { userJwt, userId } = await helper.createUser();
-    const { ticket } = await helper.createTicket({});
-    const { order } = await helper.createOrder({ ticket });
+    const { userJwt, userId } = await helperDB.createUser();
+    const { ticket } = await helperDB.createTicket({});
+    const { order } = await helperDB.createOrder({ ticket });
 
     const response = await request(app.getHttpServer())
       .delete(buildUrl(url, { orderId: order.id }))

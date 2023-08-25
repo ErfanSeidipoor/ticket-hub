@@ -32,8 +32,20 @@ spec:
               value: 'yes'
             - name: KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE
               value: 'true'
+            - name: KAFKA_CFG_OFFSETS_TOPIC_REPLICATION_FACTOR
+              value: '1'
+            - name: KAFKA_CFG_DEFAULT_REPLICATION_FACTOR
+              value: '1'
             - name: KAFKA_CFG_GROUP_COORDINATOR_NEW_ENABLE
               value: 'true'
+            - name: KAFKA_CFG_PROCESS_ROLES
+              value: 'controller,broker'
+            - name: KAFKA_CFG_NODE_ID
+              value: '0'
+            - name: KAFKA_CFG_CONTROLLER_LISTENER_NAMES
+              value: 'CONTROLLER'
+            - name: KAFKA_CFG_CONTROLLER_QUORUM_VOTERS
+              value: '0@//:9093'
 
 ---
 apiVersion: v1

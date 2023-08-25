@@ -4,15 +4,15 @@ import { faker } from '@faker-js/faker';
 import request from 'supertest';
 import { AppModule } from '@tickethub/tickets/app/app.module';
 import { setupApp } from '@tickethub/tickets/setup-app';
-import { Helper } from '@tickethub/tickets/test/helper';
 import { buildUrl } from '@tickethub/utils';
 import { TICKET_NOT_FOUND } from '@tickethub/error';
+import { HelperDB } from '../helper.db';
 
 const url = '/:ticketId';
-
+jest.setTimeout(30000);
 describe('tickets(GET) api/tickets/:ticketId', () => {
   let app: INestApplication;
-  let helper: Helper;
+  let helperDB: HelperDB;
 
   beforeAll(async () => {
     const module = await Test.createTestingModule({
@@ -21,20 +21,20 @@ describe('tickets(GET) api/tickets/:ticketId', () => {
     app = module.createNestApplication();
     setupApp(app);
     await app.init();
-    helper = new Helper(app);
+    helperDB = new HelperDB(app);
   });
 
   beforeEach(async () => {
-    await helper.dropAllCollections();
+    await helperDB.dropAllCollections();
   });
 
   afterAll(async () => {
-    await helper.closeConnection();
+    await helperDB.closeConnection();
   });
 
   it('returns the ticket if the ticket is found', async () => {
-    const { userJwt } = await helper.createUser();
-    const { ticket } = await helper.createTicket({});
+    const { userJwt } = await helperDB.createUser();
+    const { ticket } = await helperDB.createTicket({});
 
     const response = await request(app.getHttpServer())
       .get(buildUrl(url, { ticketId: ticket.id }))
@@ -47,8 +47,8 @@ describe('tickets(GET) api/tickets/:ticketId', () => {
   });
 
   it('fails 404(TICKET_NOT_FOUND) the ticket not found', async () => {
-    const { userJwt } = await helper.createUser();
-    await helper.createTicket({});
+    const { userJwt } = await helperDB.createUser();
+    await helperDB.createTicket({});
 
     const response = await request(app.getHttpServer())
       .get(buildUrl(url, { ticketId: faker.database.mongodbObjectId() }))

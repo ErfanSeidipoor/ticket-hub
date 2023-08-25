@@ -1,17 +1,17 @@
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import { GetTicketsRequestTickets } from '@tickethub/dto';
-import { AppModule } from '@tickethub/orders/app/app.module';
-import { setupApp } from '@tickethub/orders/setup-app';
-import { Helper } from '@tickethub/orders/test/helper';
-import { buildUrl } from '@tickethub/utils';
 import request from 'supertest';
+import { AppModule } from '@tickethub/tickets/app/app.module';
+import { setupApp } from '@tickethub/tickets/setup-app';
+import { HelperDB } from '../helper.db';
+import { buildUrl } from '@tickethub/utils';
+import { GetTicketsRequestTickets } from '@tickethub/dto';
 
 const url = '/';
-
-describe('orders(GET) api/orders', () => {
+jest.setTimeout(30000);
+describe('tickets(GET) api/tickets', () => {
   let app: INestApplication;
-  let helper: Helper;
+  let helperDB: HelperDB;
   let requestQuery: GetTicketsRequestTickets;
 
   beforeAll(async () => {
@@ -21,21 +21,21 @@ describe('orders(GET) api/orders', () => {
     app = module.createNestApplication();
     setupApp(app);
     await app.init();
-    helper = new Helper(app);
+    helperDB = new HelperDB(app);
   });
 
   beforeEach(async () => {
-    await helper.dropAllCollections();
+    await helperDB.dropAllCollections();
   });
 
   afterAll(async () => {
-    await helper.closeConnection();
+    await helperDB.closeConnection();
   });
 
-  it('can fetch a list of orders and consist of meta for pagination info', async () => {
-    const { userId, userJwt } = await helper.createUser();
+  it('can fetch a list of tickets and consist of meta for pagination info', async () => {
+    const { userId, userJwt } = await helperDB.createUser();
     const COUNT = 5;
-    await helper.createMultipleOrders(COUNT, { userId });
+    await helperDB.createMultipleTickets(COUNT, { userId });
 
     requestQuery = { limit: 5, page: 1 };
 
@@ -50,11 +50,11 @@ describe('orders(GET) api/orders', () => {
     expect(response.body.meta.currentPage).toBe(requestQuery.page);
   });
 
-  it('can fetch a list of orders and filter base on userId', async () => {
-    const { userId, userJwt } = await helper.createUser();
+  it('can fetch a list of tickets and filter base on userId', async () => {
+    const { userId, userJwt } = await helperDB.createUser();
     const COUNT = 5;
-    await helper.createMultipleOrders(COUNT, { userId });
-    await helper.createMultipleOrders(COUNT, {});
+    await helperDB.createMultipleTickets(COUNT, { userId });
+    await helperDB.createMultipleTickets(COUNT, {});
 
     requestQuery = { limit: 5, page: 1, userId };
 

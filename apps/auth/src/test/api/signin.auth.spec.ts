@@ -4,7 +4,7 @@ import { faker } from '@faker-js/faker';
 import request from 'supertest';
 import { AppModule } from '@tickethub/auth/app/app.module';
 import { setupApp } from '@tickethub/auth/setup-app';
-import { Helper } from '@tickethub/auth/test/helper';
+import { HelperDB } from '@tickethub/auth/test/helper.db';
 import { SignupRequestAuth } from '@tickethub/dto';
 import { Jwt } from '@tickethub/utils';
 import { EMAIL_OR_PASSWORD_IS_INCORRECT } from '@tickethub/error';
@@ -13,7 +13,7 @@ const url = '/signin';
 
 describe('auth(POST) api/auth/singin', () => {
   let app: INestApplication;
-  let helper: Helper;
+  let helperDB: HelperDB;
   let requestBody: SignupRequestAuth;
 
   beforeAll(async () => {
@@ -23,19 +23,19 @@ describe('auth(POST) api/auth/singin', () => {
     app = module.createNestApplication();
     setupApp(app);
     await app.init();
-    helper = new Helper(app);
+    helperDB = new HelperDB(app);
   });
 
   beforeEach(async () => {
-    helper.dropAllCollections();
+    helperDB.dropAllCollections();
   });
 
   afterAll(async () => {
-    helper.closeConnection();
+    helperDB.closeConnection();
   });
 
   it('returns 201 on successful singin', async () => {
-    const { user, password } = await helper.createUser({});
+    const { user, password } = await helperDB.createUser({});
 
     requestBody = {
       email: user.email,
@@ -59,7 +59,7 @@ describe('auth(POST) api/auth/singin', () => {
   });
 
   it('fails 400(EMAIL_OR_PASSWORD_IS_INCORRECT) when an incorrect password is supplied', async () => {
-    const { user } = await helper.createUser({});
+    const { user } = await helperDB.createUser({});
 
     requestBody = {
       email: user.email,
@@ -80,7 +80,7 @@ describe('auth(POST) api/auth/singin', () => {
   });
 
   it('fails 400(EMAIL_OR_PASSWORD_IS_INCORRECT) when an incorrect email is supplied', async () => {
-    const { password } = await helper.createUser({});
+    const { password } = await helperDB.createUser({});
 
     requestBody = {
       email: faker.internet.email(),

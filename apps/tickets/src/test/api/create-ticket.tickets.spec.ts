@@ -4,16 +4,18 @@ import { faker } from '@faker-js/faker';
 import request from 'supertest';
 import { AppModule } from '@tickethub/tickets/app/app.module';
 import { setupApp } from '@tickethub/tickets/setup-app';
-import { Helper } from '@tickethub/tickets/test/helper';
 import { CreateTicketRequestTickets } from '@tickethub/dto';
 import { sleep } from '@tickethub/utils';
-import { TopicsEnum } from '@tickethub/event';
+import { TicketCreatedEvent, TopicsEnum } from '@tickethub/event';
+import { HelperDB } from '../helper.db';
+import { HelperKafka } from '../helper.kafka';
 
 const url = '/';
 jest.setTimeout(30000);
 describe('tickets(POST) api/tickets', () => {
   let app: INestApplication;
-  let helper: Helper;
+  let helperDB: HelperDB;
+  let helperKafka: HelperKafka;
   let requestBody: CreateTicketRequestTickets;
 
   beforeAll(async () => {
@@ -23,25 +25,24 @@ describe('tickets(POST) api/tickets', () => {
     app = module.createNestApplication();
     setupApp(app);
     await app.init();
-    helper = new Helper(app);
-    await helper.createTicketCreatedCunsomer();
+    helperDB = new HelperDB(app);
+    helperKafka = new HelperKafka(app);
+
+    await helperKafka.createTicketCreatedCunsomer();
   });
 
   beforeEach(async () => {
-    await helper.dropAllCollections();
-    helper.cleareMessages();
+    await helperDB.dropAllCollections();
+    await helperKafka.cleareMessages();
   });
 
   afterAll(async () => {
-    await helper.closeConnection();
-  });
-
-  afterEach(async () => {
-    await helper.cleareMessages();
+    await helperDB.closeConnection();
+    await helperKafka.cleareMessages();
   });
 
   it('returns a status other than 403 if the user is signed in', async () => {
-    const { userJwt } = await helper.createUser();
+    const { userJwt } = await helperDB.createUser();
 
     requestBody = {
       title: faker.word.words(3),
@@ -57,7 +58,7 @@ describe('tickets(POST) api/tickets', () => {
   });
 
   it('returns an error if an invalid title is provided', async () => {
-    const { userJwt } = await helper.createUser();
+    const { userJwt } = await helperDB.createUser();
 
     requestBody = {
       title: '',
@@ -73,7 +74,7 @@ describe('tickets(POST) api/tickets', () => {
   });
 
   it('returns an error if an invalid price is provided', async () => {
-    const { userJwt } = await helper.createUser();
+    const { userJwt } = await helperDB.createUser();
 
     requestBody = {
       title: faker.word.words(3),
@@ -88,10 +89,10 @@ describe('tickets(POST) api/tickets', () => {
     expect(response.status).toEqual(400);
   });
 
-  it.only('creates a ticket with valid inputs', async () => {
-    const { userJwt, userId } = await helper.createUser();
+  it('creates a ticket with valid inputs', async () => {
+    const { userJwt, userId } = await helperDB.createUser();
 
-    let tickets = await helper.DBservice.ticketModel.find({});
+    let tickets = await helperDB.DBservice.ticketModel.find({});
     expect(tickets.length).toEqual(0);
 
     requestBody = {
@@ -106,15 +107,16 @@ describe('tickets(POST) api/tickets', () => {
 
     await sleep(5000);
 
-    tickets = await helper.DBservice.ticketModel.find({});
+    tickets = await helperDB.DBservice.ticketModel.find({});
     expect(tickets.length).toEqual(1);
     expect(tickets[0].price).toEqual(requestBody.price);
     expect(tickets[0].title).toEqual(requestBody.title);
     expect(tickets[0].userId).toEqual(userId);
 
-    expect(helper.kafkaMessages).toHaveLength(1);
+    expect(helperKafka.kafkaMessages).toHaveLength(1);
 
-    const ticketCreatedEvent = helper.kafkaMessages[0];
+    const ticketCreatedEvent = helperKafka
+      .kafkaMessages[0] as TicketCreatedEvent;
 
     expect(ticketCreatedEvent.topic).toBe(TopicsEnum.ticket_created);
     expect(ticketCreatedEvent.value.id).toBe(tickets[0].id);

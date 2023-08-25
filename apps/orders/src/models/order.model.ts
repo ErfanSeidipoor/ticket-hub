@@ -1,10 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import {
-  Document,
-  Types,
-  HydratedDocument,
-  Schema as MongooseSchema,
-} from 'mongoose';
+import { Document, HydratedDocument, Schema as MongooseSchema } from 'mongoose';
 
 import { OrderStatusEnum } from '@tickethub/enums';
 import { Ticket } from './ticket.model';
