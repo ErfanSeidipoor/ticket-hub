@@ -6,8 +6,8 @@ import {
   TopicsEnum,
 } from '@tickethub/event';
 
-import { TicketCreatedCunsomerHandler } from './order-created.consumer';
-import { TicketUpdatedCunsomerHandler } from './order-cancelled.consumer';
+import { TicketCreatedCunsomerHandler } from './ticket-created.consumer';
+import { TicketUpdatedCunsomerHandler } from './ticket-updated.consumer';
 import { KafkaService } from '../kafka/kafka.service';
 
 class OrdersCunsomer extends BasicCunsomer<
