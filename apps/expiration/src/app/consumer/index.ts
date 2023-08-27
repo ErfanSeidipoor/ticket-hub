@@ -4,14 +4,14 @@ import { BasicCunsomer, OrderCreatedEvent, TopicsEnum } from '@tickethub/event';
 import { KafkaService } from '../kafka/kafka.service';
 import { OrderCreatedCunsomerHandler } from './order-created.consumer';
 
-class TicketsCunsomer extends BasicCunsomer<[OrderCreatedEvent]> {
+class ExpirationCunsomer extends BasicCunsomer<[OrderCreatedEvent]> {
   topics: [TopicsEnum.order_created] = [TopicsEnum.order_created];
 }
 
 export const handlers = [OrderCreatedCunsomerHandler];
 
 @Injectable()
-export class TicketsCunsomerHandler implements OnModuleInit {
+export class ExpirationCunsomerHandler implements OnModuleInit {
   constructor(
     private readonly kafkaService: KafkaService,
     private readonly orderCreatedCunsomerHandler: OrderCreatedCunsomerHandler
@@ -19,7 +19,7 @@ export class TicketsCunsomerHandler implements OnModuleInit {
 
   async onModuleInit() {
     const kafkaConsumer = await this.kafkaService.createConsumer();
-    await new TicketsCunsomer(kafkaConsumer, {
+    await new ExpirationCunsomer(kafkaConsumer, {
       [TopicsEnum.order_created]: this.orderCreatedCunsomerHandler.handler,
     }).consume();
   }

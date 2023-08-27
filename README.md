@@ -95,6 +95,8 @@ nx test tickets --skip-nx-cach --runInBand
 nx test tickets --skip-nx-cache --test-file="apps/tickets/src/test/consumers/order-created.consumer.spec.ts"
 nx test tickets --skip-nx-cache --test-file="apps/tickets/src/test/api/create-ticket.tickets.spec.ts"
 
+nx test expiration --skip-nx-cache --test-file="apps/expiration/src/test/consumers/order-created.consumer.spec.ts"
+
 nx test orders --skip-nx-cache --test-file=""
 nx test auth --skip-nx-cache --test-file=""
 kubectl get pods -w

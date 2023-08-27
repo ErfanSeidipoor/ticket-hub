@@ -4,6 +4,7 @@
   "license": "MIT",
   "scripts": {
     "clear": "sh scripts/dev.clear.sh",
+    "expiration:test:req": "sh scripts/test.expiration.sh",
     "tickets:dev:req": "sh scripts/dev.tickets.sh",
     "tickets:test:req": "sh scripts/test.tickets.sh",
     "tickets:dev": "nx serve tickets",

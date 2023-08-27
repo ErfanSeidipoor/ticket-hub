@@ -1,15 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { OrderCreatedEvent } from '@tickethub/event';
+import { BullService } from '../bull/bull.service';
 
 @Injectable()
 export class OrderCreatedCunsomerHandler {
+  constructor(private readonly bullService: BullService) {}
+
   handler = async (value: OrderCreatedEvent['value']) => {
-    const { id, expiresAt } = value;
+    const { id: orderId, expiresAt } = value;
 
-    /* ------------------------------- validation ------------------------------- */
+    const delay = new Date(expiresAt).getTime() - new Date().getTime();
 
-    /* --------------------------------- change --------------------------------- */
-
-    /* ---------------------------------- save ---------------------------------- */
+    await this.bullService.add({ orderId });
   };
 }

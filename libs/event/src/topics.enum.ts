@@ -3,4 +3,5 @@ export enum TopicsEnum {
   ticket_updated = 'ticket-updated',
   order_created = 'order-created',
   order_cancelled = 'order-cancelled',
+  order_expiration = 'order-expiration',
 }

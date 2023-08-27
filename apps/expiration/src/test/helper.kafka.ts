@@ -1,24 +1,20 @@
 import { INestApplication } from '@nestjs/common';
 import {
   BasicCunsomer,
-  OrderCancelledEvent,
-  OrderCreatedEvent,
+  OrderExpirationEvent,
   TopicsEnum,
 } from '@tickethub/event';
 import { KafkaService } from '../app/kafka/kafka.service';
 
-export class OrderCreatedCunsomer extends BasicCunsomer<[OrderCreatedEvent]> {
-  topics: [TopicsEnum.order_created] = [TopicsEnum.order_created];
-}
-export class OrderCancelledCunsomer extends BasicCunsomer<
-  [OrderCancelledEvent]
+export class OrderExpirationCunsomer extends BasicCunsomer<
+  [OrderExpirationEvent]
 > {
-  topics: [TopicsEnum.order_cancelled] = [TopicsEnum.order_cancelled];
+  topics: [TopicsEnum.order_expiration] = [TopicsEnum.order_expiration];
 }
 
 export class HelperKafka {
   kafkaService: KafkaService;
-  kafkaMessages: (OrderCreatedEvent | OrderCancelledEvent)[] = [];
+  kafkaMessages: OrderExpirationEvent[] = [];
   groupId = 'group-test';
 
   constructor(public app: INestApplication) {
@@ -51,25 +47,11 @@ export class HelperKafka {
     }
   }
 
-  async createOrderCancelledCunsomer() {
-    await new OrderCancelledCunsomer(
+  async createOrderExpirationCunsomer() {
+    await new OrderExpirationCunsomer(
       await this.kafkaService.createConsumer(this.groupId),
       {
-        [TopicsEnum.order_cancelled]: async (value, topic) => {
-          this.kafkaMessages.push({
-            topic,
-            value,
-          });
-        },
-      }
-    ).consume();
-  }
-
-  async createOrderCreatedCunsomer() {
-    await new OrderCreatedCunsomer(
-      await this.kafkaService.createConsumer(this.groupId),
-      {
-        [TopicsEnum.order_created]: async (value, topic) => {
+        [TopicsEnum.order_expiration]: async (value, topic) => {
           this.kafkaMessages.push({
             topic,
             value,
