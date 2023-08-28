@@ -11,6 +11,6 @@ export class OrderCreatedCunsomerHandler {
 
     const delay = new Date(expiresAt).getTime() - new Date().getTime();
 
-    await this.bullService.add({ orderId });
+    await this.bullService.queue.add({ orderId }, { delay });
   };
 }
