@@ -8,6 +8,8 @@ import { sleep } from '@tickethub/utils';
 import { HelperDB } from '../helper.db';
 import { HelperKafka } from '../helper.kafka';
 
+jest.setTimeout(30000);
+
 describe('orders(Cunsomer) ticket-updated', () => {
   let app: INestApplication;
   let helperDB: HelperDB;

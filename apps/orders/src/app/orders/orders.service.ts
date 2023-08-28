@@ -12,12 +12,7 @@ import {
   TICKET_NOT_FOUND,
 } from '@tickethub/error';
 import { OrderCancelledProducer, OrderCreatedProducer } from '@tickethub/event';
-import {
-  Order,
-  OrderDocument,
-  Ticket,
-  TicketDocument,
-} from '@tickethub/orders/models';
+import { Order, OrderDocument, Ticket } from '@tickethub/orders/models';
 import { IPaginate, paginate } from '@tickethub/utils';
 import { FilterQuery, Model } from 'mongoose';
 import { DBService } from '../db/db.service';

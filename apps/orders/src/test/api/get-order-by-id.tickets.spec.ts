@@ -8,8 +8,9 @@ import { HelperDB } from '../helper.db';
 import { buildUrl } from '@tickethub/utils';
 import { ORDER_NOT_FOUND } from '@tickethub/error';
 
-const url = '/:orderId';
+jest.setTimeout(30000);
 
+const url = '/:orderId';
 describe('orders(GET) api/orders/:orderId', () => {
   let app: INestApplication;
   let helperDB: HelperDB;

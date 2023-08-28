@@ -24,6 +24,7 @@ export class KafkaService implements OnModuleInit, OnApplicationShutdown {
     TopicsEnum.ticket_updated,
     TopicsEnum.order_created,
     TopicsEnum.order_cancelled,
+    TopicsEnum.order_expiration,
   ];
 
   public readonly admin: Admin = this.kafka.admin();

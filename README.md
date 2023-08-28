@@ -91,7 +91,7 @@ kubectl delete pods --all
 kubectl delete deployments --all
 kubectl delete services --all
 
-nx test tickets --skip-nx-cach --runInBand
+nx test orders --skip-nx-cach --runInBand
 nx test tickets --skip-nx-cache --test-file="apps/tickets/src/test/consumers/order-created.consumer.spec.ts"
 nx test tickets --skip-nx-cache --test-file="apps/tickets/src/test/api/create-ticket.tickets.spec.ts"
 

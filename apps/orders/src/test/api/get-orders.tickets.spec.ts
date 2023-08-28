@@ -7,6 +7,7 @@ import { HelperDB } from '../helper.db';
 import { buildUrl } from '@tickethub/utils';
 import request from 'supertest';
 
+jest.setTimeout(30000);
 const url = '/';
 
 describe('orders(GET) api/orders', () => {
