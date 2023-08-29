@@ -1,1 +1,1 @@
-export * from './create-charge-request.dto';
+export * from './create-payment-request.dto';
