@@ -22,11 +22,12 @@
       "@tickethub/enums": ["libs/enums/src/index.ts"],
       "@tickethub/error": ["libs/error/src/index.ts"],
       "@tickethub/event": ["libs/event/src/index.ts"],
+      "@tickethub/expiration/*": ["apps/expiration/src/*"],
       "@tickethub/guard": ["libs/guard/src/index.ts"],
       "@tickethub/middleware": ["libs/middleware/src/index.ts"],
       "@tickethub/module": ["libs/module/src/index.ts"],
       "@tickethub/orders/*": ["apps/orders/src/*"],
-      "@tickethub/expiration/*": ["apps/expiration/src/*"],
+      "@tickethub/payments/*": ["apps/payments/src/*"],
       "@tickethub/pipe": ["libs/pipe/src/index.ts"],
       "@tickethub/tickets/*": ["apps/tickets/src/*"],
       "@tickethub/utils": ["libs/utils/src/index.ts"]

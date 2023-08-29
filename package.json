@@ -11,6 +11,8 @@
     "tickets:test": "nx test tickets",
     "orders:dev:req": "sh scripts/dev.orders.sh",
     "orders:test:req": "sh scripts/test.orders.sh",
+    "payments:dev:req": "sh scripts/dev.payments.sh",
+    "payments:test:req": "sh scripts/test.payments.sh",
     "orders:dev": "nx serve orders",
     "orders:test": "nx test orders",
     "auth:dev:req": "sh scripts/dev.auth.sh",
@@ -43,6 +45,7 @@
     "react-dom": "18.2.0",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.0",
+    "stripe": "^13.3.0",
     "tslib": "^2.3.0"
   },
   "devDependencies": {

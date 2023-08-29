@@ -40,3 +40,8 @@ export const ORDER_NOT_FOUND: ICustomError = {
   status: HttpStatus.NOT_FOUND,
   description: 'Order Not Found!',
 };
+
+export const ORDER_IS_NO_LONGER_AVAILABLE_FOUND: ICustomError = {
+  status: HttpStatus.BAD_REQUEST,
+  description: 'Order Is No Longer Available!',
+};

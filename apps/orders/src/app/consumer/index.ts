@@ -4,25 +4,34 @@ import {
   TicketCreatedEvent,
   TicketUpdatedEvent,
   OrderExpirationEvent,
+  PaymentCreatedEvent,
   TopicsEnum,
 } from '@tickethub/event';
 
 import { TicketCreatedCunsomerHandler } from './ticket-created.consumer';
 import { TicketUpdatedCunsomerHandler } from './ticket-updated.consumer';
 import { OrderExpirationCunsomerHandler } from './order-expiration.consumer';
+import { PaymentCreatedCunsomerHandler } from './payment-created.consumer';
 import { KafkaService } from '../kafka/kafka.service';
 
 class OrdersCunsomer extends BasicCunsomer<
-  [TicketCreatedEvent, TicketUpdatedEvent, OrderExpirationEvent]
+  [
+    TicketCreatedEvent,
+    TicketUpdatedEvent,
+    OrderExpirationEvent,
+    PaymentCreatedEvent
+  ]
 > {
   topics: [
     TopicsEnum.ticket_created,
     TopicsEnum.ticket_updated,
-    TopicsEnum.order_expiration
+    TopicsEnum.order_expiration,
+    TopicsEnum.payment_created
   ] = [
     TopicsEnum.ticket_created,
     TopicsEnum.ticket_updated,
     TopicsEnum.order_expiration,
+    TopicsEnum.payment_created,
   ];
 }
 
@@ -30,6 +39,7 @@ export const handlers = [
   TicketCreatedCunsomerHandler,
   TicketUpdatedCunsomerHandler,
   OrderExpirationCunsomerHandler,
+  PaymentCreatedCunsomerHandler,
 ];
 
 @Injectable()
@@ -38,7 +48,8 @@ export class OrdersCunsomerHandler implements OnModuleInit {
     private readonly kafkaService: KafkaService,
     private readonly ticketCreatedCunsomerHandler: TicketCreatedCunsomerHandler,
     private readonly ticketUpdatedCunsomerHandler: TicketUpdatedCunsomerHandler,
-    private readonly orderExpirationCunsomerHandler: OrderExpirationCunsomerHandler
+    private readonly orderExpirationCunsomerHandler: OrderExpirationCunsomerHandler,
+    private readonly paymentCreatedCunsomerHandler: PaymentCreatedCunsomerHandler
   ) {}
 
   async onModuleInit() {
@@ -48,6 +59,7 @@ export class OrdersCunsomerHandler implements OnModuleInit {
       [TopicsEnum.ticket_updated]: this.ticketUpdatedCunsomerHandler.handler,
       [TopicsEnum.order_expiration]:
         this.orderExpirationCunsomerHandler.handler,
+      [TopicsEnum.payment_created]: this.paymentCreatedCunsomerHandler.handler,
     }).consume();
   }
 }
