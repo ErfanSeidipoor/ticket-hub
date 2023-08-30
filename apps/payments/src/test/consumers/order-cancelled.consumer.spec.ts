@@ -11,6 +11,7 @@ import { HelperKafka } from '@tickethub/payments/test/helper.kafka';
 import { sleep } from '@tickethub/utils';
 
 jest.setTimeout(30000);
+
 describe('payments(Cunsomer) order-cancelled', () => {
   let app: INestApplication;
   let helperDB: HelperDB;
@@ -42,7 +43,7 @@ describe('payments(Cunsomer) order-cancelled', () => {
     const { order } = await helperDB.createOrder({});
 
     const eventValue: OrderCancelledEvent['value'] = {
-      id: faker.database.mongodbObjectId(),
+      id: order.id,
       ticket: {
         id: faker.database.mongodbObjectId(),
       },
@@ -51,7 +52,7 @@ describe('payments(Cunsomer) order-cancelled', () => {
       eventValue
     );
 
-    await sleep();
+    await sleep(5000);
 
     const updatedOrder = await helperDB.DBservice.orderModel.findById(order.id);
 

@@ -102,3 +102,18 @@ nx test auth --skip-nx-cache --test-file=""
 kubectl get pods -w
 
 kubectl -n <namespace> get secret <name-of-secret> -o jsonpath="{.data.password}" | base64 -d
+
+npm run auth:dev:req
+npm run auth:dev
+
+npm run tickets:dev:req
+npm run tickets:dev
+
+npm run orders:dev:req
+npm run orders:dev
+
+npm run payments:dev:req
+npm run payments:dev
+
+npm run expiration:dev:req
+npm run expiration:dev

@@ -52,12 +52,30 @@ export class HelperDB {
 
     const order = new this.DBservice.orderModel({
       userId: userId || faker.database.mongodbObjectId(),
-      price,
       status: status || OrderStatusEnum.created,
+      price: price || faker.number.int({ min: 100, max: 1000 }),
     });
 
     return {
       order: await order.save(),
+    };
+  }
+
+  async createPayment(attrs: {
+    token?: string;
+    stripeId?: string;
+    userId?: string;
+  }) {
+    const { token, stripeId, userId } = attrs;
+
+    const payment = new this.DBservice.paymentModel({
+      userId: userId || faker.database.mongodbObjectId(),
+      stripeId: stripeId || faker.database.mongodbObjectId(),
+      token: token || faker.string.alphanumeric(100),
+    });
+
+    return {
+      payment: await payment.save(),
     };
   }
 }

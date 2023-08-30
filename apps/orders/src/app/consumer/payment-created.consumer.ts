@@ -12,9 +12,10 @@ export class PaymentCreatedCunsomerHandler {
 
   handler = async (value: PaymentCreatedEvent['value']) => {
     const { orderId } = value;
+
     /* ------------------------------- validation ------------------------------- */
 
-    const order = await this.orderModel.findById(orderId).populate('ticket');
+    const order = await this.orderModel.findById(orderId);
 
     if (!order) {
       throw new CustomError(ORDER_NOT_FOUND);

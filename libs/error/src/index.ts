@@ -41,7 +41,17 @@ export const ORDER_NOT_FOUND: ICustomError = {
   description: 'Order Not Found!',
 };
 
-export const ORDER_IS_NO_LONGER_AVAILABLE_FOUND: ICustomError = {
+export const ORDER_IS_NO_LONGER_AVAILABLE: ICustomError = {
   status: HttpStatus.BAD_REQUEST,
   description: 'Order Is No Longer Available!',
+};
+
+export const STRIPE_TOKEN_NOT_FOUND: ICustomError = {
+  status: HttpStatus.NOT_FOUND,
+  description: 'Stripe Token Not Found!',
+};
+
+export const STRIPE_TOKEN_IS_USED_BEFORE: ICustomError = {
+  status: HttpStatus.NOT_FOUND,
+  description: 'Stripe Token Is Used Before!',
 };

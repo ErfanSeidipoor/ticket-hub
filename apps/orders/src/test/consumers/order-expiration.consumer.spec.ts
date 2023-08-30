@@ -1,5 +1,7 @@
 import { INestApplication } from '@nestjs/common';
+import { faker } from '@faker-js/faker';
 import { Test } from '@nestjs/testing';
+import * as error from '@tickethub/error';
 import {
   OrderCancelledEvent,
   OrderExpirationEvent,
@@ -97,5 +99,31 @@ describe('orders(Cunsomer) order-expiration', () => {
     expect(updatedOrder.status).toEqual(OrderStatusEnum.complete);
 
     expect(helperKafka.kafkaMessages).toHaveLength(0);
+  });
+
+  it('fails 404(ORDER_NOT_FOUND) if the order not found', async () => {
+    const customErrorConstructorSpy = jest.spyOn(error, 'CustomError');
+    const { userId } = await helperDB.createUser();
+    const { ticket } = await helperDB.createTicket({});
+    await helperDB.createOrder({
+      ticket,
+      userId,
+      status: OrderStatusEnum.complete,
+    });
+
+    const eventValue: OrderExpirationEvent['value'] = {
+      id: faker.database.mongodbObjectId(),
+    };
+
+    await new OrderExpirationProducer(
+      helperKafka.kafkaService.producer
+    ).produce(eventValue);
+
+    await sleep();
+
+    expect(customErrorConstructorSpy).toHaveBeenCalled();
+    expect(customErrorConstructorSpy).toHaveBeenCalledWith(
+      error.ORDER_NOT_FOUND
+    );
   });
 });

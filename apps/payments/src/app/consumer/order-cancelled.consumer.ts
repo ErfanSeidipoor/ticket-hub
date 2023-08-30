@@ -24,7 +24,7 @@ export class OrderCancelledCunsomerHandler {
 
     /* --------------------------------- change --------------------------------- */
 
-    assignDefinedProps(order, { status: OrderStatusEnum.cancelled });
+    order.status = OrderStatusEnum.cancelled;
 
     /* ---------------------------------- save ---------------------------------- */
 

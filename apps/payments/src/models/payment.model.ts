@@ -16,6 +16,9 @@ export type PaymentDocument = HydratedDocument<Payment>;
 })
 export class Payment extends Document {
   @Prop({ type: String, required: true })
+  token: string;
+
+  @Prop({ type: String, required: true })
   userId: string;
 
   @Prop({ type: String, required: true })

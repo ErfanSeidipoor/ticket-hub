@@ -3,16 +3,19 @@ import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { CreatePaymentRequestPayments } from '@tickethub/dto';
 import {
-  ORDER_IS_NO_LONGER_AVAILABLE_FOUND,
+  ORDER_IS_NO_LONGER_AVAILABLE,
   ORDER_NOT_FOUND,
+  STRIPE_TOKEN_IS_USED_BEFORE,
+  STRIPE_TOKEN_NOT_FOUND,
 } from '@tickethub/error';
 import { TopicsEnum } from '@tickethub/event';
-import { AppModule } from '@tickethub/orders/app/app.module';
-import { setupApp } from '@tickethub/orders/setup-app';
+import { AppModule } from '@tickethub/payments/app/app.module';
+import { setupApp } from '@tickethub/payments/setup-app';
 import { sleep } from '@tickethub/utils';
 import request from 'supertest';
 import { HelperDB } from '../helper.db';
 import { HelperKafka } from '../helper.kafka';
+import { OrderStatusEnum } from '@tickethub/enums';
 
 const url = '/';
 jest.setTimeout(30000);
@@ -94,9 +97,12 @@ describe('payments(POST) api/payments', () => {
     expect(message).toEqual(ORDER_NOT_FOUND.description);
   });
 
-  it('returns a 404(ORDER_IS_NO_LONGER_AVAILABLE_FOUND) when purchasing a cancelled order', async () => {
-    const { userJwt } = await helperDB.createUser();
-    const { order } = await helperDB.createOrder({});
+  it('returns a 404(ORDER_IS_NO_LONGER_AVAILABLE) when purchasing a cancelled order', async () => {
+    const { userJwt, userId } = await helperDB.createUser();
+    const { order } = await helperDB.createOrder({
+      userId,
+      status: OrderStatusEnum.cancelled,
+    });
 
     requestBody = {
       orderId: order.id,
@@ -113,8 +119,60 @@ describe('payments(POST) api/payments', () => {
       status,
     } = response;
 
-    expect(status).toEqual(ORDER_IS_NO_LONGER_AVAILABLE_FOUND.status);
-    expect(message).toEqual(ORDER_IS_NO_LONGER_AVAILABLE_FOUND.description);
+    expect(message).toEqual(ORDER_IS_NO_LONGER_AVAILABLE.description);
+    expect(status).toEqual(ORDER_IS_NO_LONGER_AVAILABLE.status);
+  });
+
+  it('returns a 404(STRIPE_TOKEN_NOT_FOUND) when stripe token is invalid', async () => {
+    const { userJwt, userId } = await helperDB.createUser();
+    const { order } = await helperDB.createOrder({
+      userId,
+      status: OrderStatusEnum.created,
+    });
+
+    requestBody = {
+      orderId: order.id,
+      token: 'fake-token',
+    };
+
+    const response = await request(app.getHttpServer())
+      .post(url)
+      .set('Cookie', [`jwt=${userJwt}`])
+      .send(requestBody);
+
+    const {
+      body: { message },
+      status,
+    } = response;
+
+    expect(message).toEqual(STRIPE_TOKEN_NOT_FOUND.description);
+    expect(status).toEqual(STRIPE_TOKEN_NOT_FOUND.status);
+  });
+
+  it('returns a 404(STRIPE_TOKEN_IS_USED_BEFORE) when stripe token is usd before', async () => {
+    const { userJwt, userId } = await helperDB.createUser();
+    const { order } = await helperDB.createOrder({ userId });
+    const { payment } = await helperDB.createPayment({
+      userId,
+    });
+
+    requestBody = {
+      orderId: order.id,
+      token: payment.token,
+    };
+
+    const response = await request(app.getHttpServer())
+      .post(url)
+      .set('Cookie', [`jwt=${userJwt}`])
+      .send(requestBody);
+
+    const {
+      body: { message },
+      status,
+    } = response;
+
+    expect(message).toEqual(STRIPE_TOKEN_IS_USED_BEFORE.description);
+    expect(status).toEqual(STRIPE_TOKEN_IS_USED_BEFORE.status);
   });
 
   it('creates an payment with valid inputs', async () => {
@@ -129,7 +187,7 @@ describe('payments(POST) api/payments', () => {
       orderId: order.id,
     };
 
-    await request(app.getHttpServer())
+    const response = await request(app.getHttpServer())
       .post(url)
       .set('Cookie', [`jwt=${userJwt}`])
       .send(requestBody);
@@ -137,8 +195,10 @@ describe('payments(POST) api/payments', () => {
     await sleep();
 
     const payment = await helperDB.DBservice.paymentModel.findOne({
-      orderId: order.id,
+      token: requestBody.token,
     });
+
+    expect(payment).toBeDefined();
     expect(payment.stripeId).toBeDefined();
 
     expect(helperKafka.kafkaMessages).toHaveLength(1);
