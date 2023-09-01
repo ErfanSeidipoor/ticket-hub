@@ -3,7 +3,7 @@ import { OrderCreatedEvent } from '@tickethub/event';
 import { BullService } from '../bull/bull.service';
 
 @Injectable()
-export class OrderCreatedCunsomerHandler {
+export class OrderCreatedConsumerHandler {
   constructor(private readonly bullService: BullService) {}
 
   handler = async (value: OrderCreatedEvent['value']) => {

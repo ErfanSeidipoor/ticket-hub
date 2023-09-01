@@ -1,16 +1,16 @@
 import { INestApplication } from '@nestjs/common';
 import {
-  BasicCunsomer,
+  BasicConsumer,
   TicketCreatedEvent,
   TicketUpdatedEvent,
   TopicsEnum,
 } from '@tickethub/event';
 import { KafkaService } from '../app/kafka/kafka.service';
 
-export class TicketCreatedCunsomer extends BasicCunsomer<[TicketCreatedEvent]> {
+export class TicketCreatedConsumer extends BasicConsumer<[TicketCreatedEvent]> {
   topics: [TopicsEnum.ticket_created] = [TopicsEnum.ticket_created];
 }
-export class TicketUpdatedCunsomer extends BasicCunsomer<[TicketUpdatedEvent]> {
+export class TicketUpdatedConsumer extends BasicConsumer<[TicketUpdatedEvent]> {
   topics: [TopicsEnum.ticket_updated] = [TopicsEnum.ticket_updated];
 }
 
@@ -49,8 +49,8 @@ export class HelperKafka {
     }
   }
 
-  async createTicketUpdatedCunsomer() {
-    await new TicketUpdatedCunsomer(
+  async createTicketUpdatedConsumer() {
+    await new TicketUpdatedConsumer(
       await this.kafkaService.createConsumer(this.groupId),
       {
         [TopicsEnum.ticket_updated]: async (value, topic) => {
@@ -63,8 +63,8 @@ export class HelperKafka {
     ).consume();
   }
 
-  async createTicketCreatedCunsomer() {
-    await new TicketCreatedCunsomer(
+  async createTicketCreatedConsumer() {
+    await new TicketCreatedConsumer(
       await this.kafkaService.createConsumer(this.groupId),
       {
         [TopicsEnum.ticket_created]: async (value, topic) => {

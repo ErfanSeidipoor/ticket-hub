@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tckhb-expiration-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tckhb-expiration
+  template:
+    metadata:
+      labels:
+        app: tckhb-expiration
+    spec:
+      containers:
+        - name: tckhb-expiration-container
+          image: erfanseidipoor/tckhb-expiration
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: KAFKA_GROUP
+              value: tckhb-expiration-deployment
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: REDIS_URL
+              value: tckhb-expiration-redis-clusterip-service
+            - name: REDIS_PORT
+              value: '6379'
+            - name: KAFKA_URL
+              value: tckhb-kafka-clusterip-service:9092
+          ports:
+            - containerPort: 8005
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tckhb-expiration-clisterip-service
+spec:
+  type: ClusterIP
+  selector:
+    app: tckhb-expiration
+  ports:
+    - name: expiration
+      protocol: TCP
+      port: 8005
+      targetPort: 8005

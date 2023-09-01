@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tckhb-payments-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tckhb-payments
+  template:
+    metadata:
+      labels:
+        app: tckhb-payments
+    spec:
+      containers:
+        - name: tckhb-payments-container
+          image: erfanseidipoor/tckhb-payments
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: KAFKA_GROUP
+              value: tckhb-payments-deployment
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: MONGO_URL
+              value: mongodb://tckhb-payments-mongo-clusterip-service:27017/payments
+            - name: KAFKA_URL
+              value: tckhb-kafka-clusterip-service:9092
+            - name: JWT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-secret
+                  key: JWT_KEY
+            - name: STRIPE_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: stripe-secret
+                  key: STRIPE_SECRET_KEY
+          ports:
+            - containerPort: 8006
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tckhb-payments-clisterip-service
+spec:
+  type: ClusterIP
+  selector:
+    app: tckhb-payments
+  ports:
+    - name: payments
+      protocol: TCP
+      port: 8006
+      targetPort: 8006

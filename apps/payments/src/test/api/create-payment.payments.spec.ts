@@ -39,7 +39,7 @@ describe('payments(POST) api/payments', () => {
     helperDB = new HelperDB(app);
     helperKafka = new HelperKafka(app);
 
-    await helperKafka.createPaymentCreatedCunsomer();
+    await helperKafka.createPaymentCreatedConsumer();
   });
 
   beforeEach(async () => {

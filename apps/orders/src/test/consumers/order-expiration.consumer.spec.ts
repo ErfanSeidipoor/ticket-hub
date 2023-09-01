@@ -16,7 +16,7 @@ import { HelperKafka } from '../helper.kafka';
 import { OrderStatusEnum } from '@tickethub/enums';
 
 jest.setTimeout(30000);
-describe('orders(Cunsomer) order-expiration', () => {
+describe('orders(Consumer) order-expiration', () => {
   let app: INestApplication;
   let helperDB: HelperDB;
   let helperKafka: HelperKafka;
@@ -32,7 +32,7 @@ describe('orders(Cunsomer) order-expiration', () => {
     helperDB = new HelperDB(app);
     helperKafka = new HelperKafka(app);
 
-    await helperKafka.createOrderCancelledCunsomer();
+    await helperKafka.createOrderCancelledConsumer();
   });
 
   beforeEach(async () => {

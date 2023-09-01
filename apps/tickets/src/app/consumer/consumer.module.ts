@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Ticket, TicketSchema } from '@tickethub/tickets/models';
-import { TicketsCunsomerHandler, handlers } from '.';
+import { TicketsConsumerHandler, handlers } from '.';
 import { KafkaModule } from '../kafka/kafka.module';
 import { DBModule } from '../db/db.module';
 
@@ -11,7 +11,7 @@ import { DBModule } from '../db/db.module';
     DBModule,
     MongooseModule.forFeature([{ name: Ticket.name, schema: TicketSchema }]),
   ],
-  providers: [...handlers, TicketsCunsomerHandler],
+  providers: [...handlers, TicketsConsumerHandler],
   exports: [],
 })
 export class ConsumerModule {}

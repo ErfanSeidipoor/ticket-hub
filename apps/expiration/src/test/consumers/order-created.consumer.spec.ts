@@ -14,7 +14,7 @@ import { HelperBull } from '../helper.bull';
 import { sleep } from '@tickethub/utils';
 
 jest.setTimeout(30000);
-describe('expiration(Cunsomer) order-created', () => {
+describe('expiration(Consumer) order-created', () => {
   let app: INestApplication;
   let helperKafka: HelperKafka;
   let helperBull: HelperBull;
@@ -29,7 +29,7 @@ describe('expiration(Cunsomer) order-created', () => {
     helperKafka = new HelperKafka(app);
     helperBull = new HelperBull(app);
 
-    await helperKafka.createOrderExpirationCunsomer();
+    await helperKafka.createOrderExpirationConsumer();
   });
 
   beforeEach(async () => {

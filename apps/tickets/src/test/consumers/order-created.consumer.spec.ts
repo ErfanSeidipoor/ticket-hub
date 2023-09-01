@@ -11,7 +11,7 @@ import { HelperKafka } from '@tickethub/tickets/test/helper.kafka';
 import { sleep } from '@tickethub/utils';
 
 jest.setTimeout(30000);
-describe('tickets(Cunsomer) order-created', () => {
+describe('tickets(Consumer) order-created', () => {
   let app: INestApplication;
   let helperDB: HelperDB;
   let helperKafka: HelperKafka;

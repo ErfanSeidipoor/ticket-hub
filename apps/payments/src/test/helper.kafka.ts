@@ -1,12 +1,12 @@
 import { INestApplication } from '@nestjs/common';
 import {
-  BasicCunsomer,
+  BasicConsumer,
   PaymentCreatedEvent,
   TopicsEnum,
 } from '@tickethub/event';
 import { KafkaService } from '../app/kafka/kafka.service';
 
-export class PaymentCreatedCunsomer extends BasicCunsomer<
+export class PaymentCreatedConsumer extends BasicConsumer<
   [PaymentCreatedEvent]
 > {
   topics: [TopicsEnum.payment_created] = [TopicsEnum.payment_created];
@@ -47,8 +47,8 @@ export class HelperKafka {
     }
   }
 
-  async createPaymentCreatedCunsomer() {
-    await new PaymentCreatedCunsomer(
+  async createPaymentCreatedConsumer() {
+    await new PaymentCreatedConsumer(
       await this.kafkaService.createConsumer(this.groupId),
       {
         [TopicsEnum.payment_created]: async (value, topic) => {

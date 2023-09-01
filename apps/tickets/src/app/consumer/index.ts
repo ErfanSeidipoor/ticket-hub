@@ -1,16 +1,16 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import {
-  BasicCunsomer,
+  BasicConsumer,
   OrderCancelledEvent,
   OrderCreatedEvent,
   TopicsEnum,
 } from '@tickethub/event';
 
-import { OrderCreatedCunsomerHandler } from './order-created.consumer';
-import { OrderCancelledCunsomerHandler } from './order-cancelled.consumer';
+import { OrderCreatedConsumerHandler } from './order-created.consumer';
+import { OrderCancelledConsumerHandler } from './order-cancelled.consumer';
 import { KafkaService } from '../kafka/kafka.service';
 
-class TicketsCunsomer extends BasicCunsomer<
+class TicketsConsumer extends BasicConsumer<
   [OrderCreatedEvent, OrderCancelledEvent]
 > {
   topics: [TopicsEnum.order_created, TopicsEnum.order_cancelled] = [
@@ -20,23 +20,23 @@ class TicketsCunsomer extends BasicCunsomer<
 }
 
 export const handlers = [
-  OrderCreatedCunsomerHandler,
-  OrderCancelledCunsomerHandler,
+  OrderCreatedConsumerHandler,
+  OrderCancelledConsumerHandler,
 ];
 
 @Injectable()
-export class TicketsCunsomerHandler implements OnModuleInit {
+export class TicketsConsumerHandler implements OnModuleInit {
   constructor(
     private readonly kafkaService: KafkaService,
-    private readonly orderCreatedCunsomerHandler: OrderCreatedCunsomerHandler,
-    private readonly orderCancelledCunsomerHandler: OrderCancelledCunsomerHandler
+    private readonly orderCreatedConsumerHandler: OrderCreatedConsumerHandler,
+    private readonly orderCancelledConsumerHandler: OrderCancelledConsumerHandler
   ) {}
 
   async onModuleInit() {
     const kafkaConsumer = await this.kafkaService.createConsumer();
-    await new TicketsCunsomer(kafkaConsumer, {
-      [TopicsEnum.order_created]: this.orderCreatedCunsomerHandler.handler,
-      [TopicsEnum.order_cancelled]: this.orderCancelledCunsomerHandler.handler,
+    await new TicketsConsumer(kafkaConsumer, {
+      [TopicsEnum.order_created]: this.orderCreatedConsumerHandler.handler,
+      [TopicsEnum.order_cancelled]: this.orderCancelledConsumerHandler.handler,
     }).consume();
   }
 }

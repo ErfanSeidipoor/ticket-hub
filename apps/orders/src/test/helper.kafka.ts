@@ -1,16 +1,16 @@
 import { INestApplication } from '@nestjs/common';
 import {
-  BasicCunsomer,
+  BasicConsumer,
   OrderCancelledEvent,
   OrderCreatedEvent,
   TopicsEnum,
 } from '@tickethub/event';
 import { KafkaService } from '../app/kafka/kafka.service';
 
-export class OrderCreatedCunsomer extends BasicCunsomer<[OrderCreatedEvent]> {
+export class OrderCreatedConsumer extends BasicConsumer<[OrderCreatedEvent]> {
   topics: [TopicsEnum.order_created] = [TopicsEnum.order_created];
 }
-export class OrderCancelledCunsomer extends BasicCunsomer<
+export class OrderCancelledConsumer extends BasicConsumer<
   [OrderCancelledEvent]
 > {
   topics: [TopicsEnum.order_cancelled] = [TopicsEnum.order_cancelled];
@@ -51,8 +51,8 @@ export class HelperKafka {
     }
   }
 
-  async createOrderCancelledCunsomer() {
-    await new OrderCancelledCunsomer(
+  async createOrderCancelledConsumer() {
+    await new OrderCancelledConsumer(
       await this.kafkaService.createConsumer(this.groupId),
       {
         [TopicsEnum.order_cancelled]: async (value, topic) => {
@@ -65,8 +65,8 @@ export class HelperKafka {
     ).consume();
   }
 
-  async createOrderCreatedCunsomer() {
-    await new OrderCreatedCunsomer(
+  async createOrderCreatedConsumer() {
+    await new OrderCreatedConsumer(
       await this.kafkaService.createConsumer(this.groupId),
       {
         [TopicsEnum.order_created]: async (value, topic) => {

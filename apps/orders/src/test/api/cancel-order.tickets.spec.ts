@@ -33,7 +33,7 @@ describe('orders(PUT) api/orders/:orderId', () => {
     helperDB = new HelperDB(app);
     helperKafka = new HelperKafka(app);
 
-    await helperKafka.createOrderCancelledCunsomer();
+    await helperKafka.createOrderCancelledConsumer();
   });
 
   beforeEach(async () => {

@@ -11,7 +11,7 @@ import { HelperDB } from '../helper.db';
 import { HelperKafka } from '../helper.kafka';
 
 jest.setTimeout(30000);
-describe('orders(Cunsomer) payment-created', () => {
+describe('orders(Consumer) payment-created', () => {
   let app: INestApplication;
   let helperDB: HelperDB;
   let helperKafka: HelperKafka;

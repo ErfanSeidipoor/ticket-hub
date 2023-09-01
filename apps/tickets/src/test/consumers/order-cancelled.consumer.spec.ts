@@ -10,7 +10,7 @@ import { HelperKafka } from '@tickethub/tickets/test/helper.kafka';
 import { sleep } from '@tickethub/utils';
 
 jest.setTimeout(30000);
-describe('tickets(Cunsomer) order-cancelled', () => {
+describe('tickets(Consumer) order-cancelled', () => {
   let app: INestApplication;
   let helperDB: HelperDB;
   let helperKafka: HelperKafka;

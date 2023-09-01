@@ -7,7 +7,7 @@ import { assignDefinedProps } from '@tickethub/utils';
 import { Model } from 'mongoose';
 
 @Injectable()
-export class TicketUpdatedCunsomerHandler {
+export class TicketUpdatedConsumerHandler {
   constructor(@InjectModel(Ticket.name) private ticketModel: Model<Ticket>) {}
 
   handler = async (value: TicketUpdatedEvent['value']) => {

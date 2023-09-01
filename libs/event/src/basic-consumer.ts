@@ -10,7 +10,7 @@ interface Event {
   value: any;
 }
 
-export abstract class BasicCunsomer<E extends Event[]> {
+export abstract class BasicConsumer<E extends Event[]> {
   abstract topics: E[number]['topic'][];
 
   constructor(

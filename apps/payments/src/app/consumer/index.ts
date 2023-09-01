@@ -1,16 +1,16 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import {
-  BasicCunsomer,
+  BasicConsumer,
   OrderCancelledEvent,
   OrderCreatedEvent,
   TopicsEnum,
 } from '@tickethub/event';
 
-import { OrderCreatedCunsomerHandler } from './order-created.consumer';
-import { OrderCancelledCunsomerHandler } from './order-cancelled.consumer';
+import { OrderCreatedConsumerHandler } from './order-created.consumer';
+import { OrderCancelledConsumerHandler } from './order-cancelled.consumer';
 import { KafkaService } from '../kafka/kafka.service';
 
-class PaymentsCunsomer extends BasicCunsomer<
+class PaymentsConsumer extends BasicConsumer<
   [OrderCreatedEvent, OrderCancelledEvent]
 > {
   topics: [TopicsEnum.order_created, TopicsEnum.order_cancelled] = [
@@ -20,23 +20,23 @@ class PaymentsCunsomer extends BasicCunsomer<
 }
 
 export const handlers = [
-  OrderCreatedCunsomerHandler,
-  OrderCancelledCunsomerHandler,
+  OrderCreatedConsumerHandler,
+  OrderCancelledConsumerHandler,
 ];
 
 @Injectable()
-export class PaymentsCunsomerHandler implements OnModuleInit {
+export class PaymentsConsumerHandler implements OnModuleInit {
   constructor(
     private readonly kafkaService: KafkaService,
-    private readonly orderCreatedCunsomerHandler: OrderCreatedCunsomerHandler,
-    private readonly orderCancelledCunsomerHandler: OrderCancelledCunsomerHandler
+    private readonly orderCreatedConsumerHandler: OrderCreatedConsumerHandler,
+    private readonly orderCancelledConsumerHandler: OrderCancelledConsumerHandler
   ) {}
 
   async onModuleInit() {
     const kafkaConsumer = await this.kafkaService.createConsumer();
-    await new PaymentsCunsomer(kafkaConsumer, {
-      [TopicsEnum.order_created]: this.orderCreatedCunsomerHandler.handler,
-      [TopicsEnum.order_cancelled]: this.orderCancelledCunsomerHandler.handler,
+    await new PaymentsConsumer(kafkaConsumer, {
+      [TopicsEnum.order_created]: this.orderCreatedConsumerHandler.handler,
+      [TopicsEnum.order_cancelled]: this.orderCancelledConsumerHandler.handler,
     }).consume();
   }
 }

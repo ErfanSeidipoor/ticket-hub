@@ -10,7 +10,7 @@ import { HelperKafka } from '../helper.kafka';
 
 jest.setTimeout(30000);
 
-describe('orders(Cunsomer) ticket-updated', () => {
+describe('orders(Consumer) ticket-updated', () => {
   let app: INestApplication;
   let helperDB: HelperDB;
   let helperKafka: HelperKafka;

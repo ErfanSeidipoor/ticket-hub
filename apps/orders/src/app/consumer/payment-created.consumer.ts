@@ -7,7 +7,7 @@ import { Order } from '@tickethub/orders/models';
 import { Model } from 'mongoose';
 
 @Injectable()
-export class PaymentCreatedCunsomerHandler {
+export class PaymentCreatedConsumerHandler {
   constructor(@InjectModel(Order.name) private orderModel: Model<Order>) {}
 
   handler = async (value: PaymentCreatedEvent['value']) => {

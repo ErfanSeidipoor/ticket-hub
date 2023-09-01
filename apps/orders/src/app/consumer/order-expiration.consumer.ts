@@ -10,7 +10,7 @@ import { CustomError, ORDER_NOT_FOUND } from '@tickethub/error';
 import { KafkaService } from '../kafka/kafka.service';
 
 @Injectable()
-export class OrderExpirationCunsomerHandler {
+export class OrderExpirationConsumerHandler {
   constructor(
     private readonly dBServce: DBService,
     private readonly kafkaService: KafkaService,

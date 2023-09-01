@@ -34,7 +34,7 @@ describe('orders(POST) api/orders', () => {
     helperDB = new HelperDB(app);
     helperKafka = new HelperKafka(app);
 
-    await helperKafka.createOrderCreatedCunsomer();
+    await helperKafka.createOrderCreatedConsumer();
   });
 
   beforeEach(async () => {

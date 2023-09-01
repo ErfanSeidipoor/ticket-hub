@@ -1,6 +1,6 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import {
-  BasicCunsomer,
+  BasicConsumer,
   TicketCreatedEvent,
   TicketUpdatedEvent,
   OrderExpirationEvent,
@@ -8,13 +8,13 @@ import {
   TopicsEnum,
 } from '@tickethub/event';
 
-import { TicketCreatedCunsomerHandler } from './ticket-created.consumer';
-import { TicketUpdatedCunsomerHandler } from './ticket-updated.consumer';
-import { OrderExpirationCunsomerHandler } from './order-expiration.consumer';
-import { PaymentCreatedCunsomerHandler } from './payment-created.consumer';
+import { TicketCreatedConsumerHandler } from './ticket-created.consumer';
+import { TicketUpdatedConsumerHandler } from './ticket-updated.consumer';
+import { OrderExpirationConsumerHandler } from './order-expiration.consumer';
+import { PaymentCreatedConsumerHandler } from './payment-created.consumer';
 import { KafkaService } from '../kafka/kafka.service';
 
-class OrdersCunsomer extends BasicCunsomer<
+class OrdersConsumer extends BasicConsumer<
   [
     TicketCreatedEvent,
     TicketUpdatedEvent,
@@ -36,30 +36,30 @@ class OrdersCunsomer extends BasicCunsomer<
 }
 
 export const handlers = [
-  TicketCreatedCunsomerHandler,
-  TicketUpdatedCunsomerHandler,
-  OrderExpirationCunsomerHandler,
-  PaymentCreatedCunsomerHandler,
+  TicketCreatedConsumerHandler,
+  TicketUpdatedConsumerHandler,
+  OrderExpirationConsumerHandler,
+  PaymentCreatedConsumerHandler,
 ];
 
 @Injectable()
-export class OrdersCunsomerHandler implements OnModuleInit {
+export class OrdersConsumerHandler implements OnModuleInit {
   constructor(
     private readonly kafkaService: KafkaService,
-    private readonly ticketCreatedCunsomerHandler: TicketCreatedCunsomerHandler,
-    private readonly ticketUpdatedCunsomerHandler: TicketUpdatedCunsomerHandler,
-    private readonly orderExpirationCunsomerHandler: OrderExpirationCunsomerHandler,
-    private readonly paymentCreatedCunsomerHandler: PaymentCreatedCunsomerHandler
+    private readonly ticketCreatedConsumerHandler: TicketCreatedConsumerHandler,
+    private readonly ticketUpdatedConsumerHandler: TicketUpdatedConsumerHandler,
+    private readonly orderExpirationConsumerHandler: OrderExpirationConsumerHandler,
+    private readonly paymentCreatedConsumerHandler: PaymentCreatedConsumerHandler
   ) {}
 
   async onModuleInit() {
     const kafkaConsumer = await this.kafkaService.createConsumer();
-    await new OrdersCunsomer(kafkaConsumer, {
-      [TopicsEnum.ticket_created]: this.ticketCreatedCunsomerHandler.handler,
-      [TopicsEnum.ticket_updated]: this.ticketUpdatedCunsomerHandler.handler,
+    await new OrdersConsumer(kafkaConsumer, {
+      [TopicsEnum.ticket_created]: this.ticketCreatedConsumerHandler.handler,
+      [TopicsEnum.ticket_updated]: this.ticketUpdatedConsumerHandler.handler,
       [TopicsEnum.order_expiration]:
-        this.orderExpirationCunsomerHandler.handler,
-      [TopicsEnum.payment_created]: this.paymentCreatedCunsomerHandler.handler,
+        this.orderExpirationConsumerHandler.handler,
+      [TopicsEnum.payment_created]: this.paymentCreatedConsumerHandler.handler,
     }).consume();
   }
 }

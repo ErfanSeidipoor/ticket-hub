@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tckhb-orders-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tckhb-orders
+  template:
+    metadata:
+      labels:
+        app: tckhb-orders
+    spec:
+      containers:
+        - name: tckhb-orders-container
+          image: erfanseidipoor/tckhb-orders
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: KAFKA_GROUP
+              value: tckhb-orders-deployment
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: MONGO_URL
+              value: mongodb://tckhb-orders-mongo-clusterip-service:27017/orders
+            - name: KAFKA_URL
+              value: tckhb-kafka-clusterip-service:9092
+            - name: JWT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-secret
+                  key: JWT_KEY
+          ports:
+            - containerPort: 8004
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tckhb-orders-clisterip-service
+spec:
+  type: ClusterIP
+  selector:
+    app: tckhb-orders
+  ports:
+    - name: orders
+      protocol: TCP
+      port: 8004
+      targetPort: 8004

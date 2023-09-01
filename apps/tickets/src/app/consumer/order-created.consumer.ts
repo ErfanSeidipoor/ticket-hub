@@ -7,7 +7,7 @@ import { assignDefinedProps } from '@tickethub/utils';
 import { OrderCreatedEvent } from '@tickethub/event';
 
 @Injectable()
-export class OrderCreatedCunsomerHandler {
+export class OrderCreatedConsumerHandler {
   constructor(@InjectModel(Ticket.name) private ticketModel: Model<Ticket>) {}
 
   handler = async (value: OrderCreatedEvent['value']) => {

@@ -28,7 +28,7 @@ describe('tickets(POST) api/tickets', () => {
     helperDB = new HelperDB(app);
     helperKafka = new HelperKafka(app);
 
-    await helperKafka.createTicketCreatedCunsomer();
+    await helperKafka.createTicketCreatedConsumer();
   });
 
   beforeEach(async () => {

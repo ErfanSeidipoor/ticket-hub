@@ -1,0 +1,54 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: tckhb-ingress-service
+  annotations:
+    nginx.ingress.kubernetes.io/use-regex: 'true'
+spec:
+  rules:
+    - host: tckhb.com
+      http:
+        paths:
+          - path: /api/auth/?(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: tckhb-auth-clisterip-service
+                port:
+                  number: 8001
+          - path: /api/payments/?(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: tckhb-payments-clisterip-service
+                port:
+                  number: 8006
+          - path: /api/orders/?(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: tckhb-orders-clisterip-service
+                port:
+                  number: 8004
+          - path: /api/tickets/?(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: tckhb-tickets-clisterip-service
+                port:
+                  number: 8003
+          - path: /api/expiration/?(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: tckhb-expiration-clisterip-service
+                port:
+                  number: 8005
+          - path: /?(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: tckhb-client-clisterip-service
+                port:
+                  number: 8002
+  ingressClassName: nginx

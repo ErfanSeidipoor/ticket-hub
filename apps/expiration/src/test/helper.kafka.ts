@@ -1,12 +1,12 @@
 import { INestApplication } from '@nestjs/common';
 import {
-  BasicCunsomer,
+  BasicConsumer,
   OrderExpirationEvent,
   TopicsEnum,
 } from '@tickethub/event';
 import { KafkaService } from '../app/kafka/kafka.service';
 
-export class OrderExpirationCunsomer extends BasicCunsomer<
+export class OrderExpirationConsumer extends BasicConsumer<
   [OrderExpirationEvent]
 > {
   topics: [TopicsEnum.order_expiration] = [TopicsEnum.order_expiration];
@@ -47,8 +47,8 @@ export class HelperKafka {
     }
   }
 
-  async createOrderExpirationCunsomer() {
-    await new OrderExpirationCunsomer(
+  async createOrderExpirationConsumer() {
+    await new OrderExpirationConsumer(
       await this.kafkaService.createConsumer(this.groupId),
       {
         [TopicsEnum.order_expiration]: async (value, topic) => {
