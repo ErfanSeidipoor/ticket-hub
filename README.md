@@ -113,7 +113,7 @@ To start working on the Ticket Hub project, follow these steps:
 - For testing each microservice, use the following commands:
 
 ```bash
-  nx serve client
+  nx test client
 ```
 
 - To start a specific microservice development server, use Nx commands. For example, to start the Auth microservice in development mode:
