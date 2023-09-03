@@ -1,121 +1,154 @@
-minikube start --driver=docker
-minikube start --driver=docker --force
-minikube service <service-name> --url
+# Ticket Hub
 
-minikube service tckhb-tickets-clisterip-service --url
-sudo minikube tunnel
-minikube dashboard
+Welcome to the **Ticket Hub** project! This is a monorepo project powered by Nx, a monorepo framework, and can be found on [GitHub](https://github.com/ErfanSeidipoor/ticket-hub).
 
-minikube addons enable ingress
-kubectl get ingress
-kubectl get pods -n ingress-nginx
+## Table of Contents
 
-kubectl get ingress
+- [Introduction](#introduction)
+- [Project Structure](#project-structure)
+- [Getting Started](#getting-started)
+- [Development](#development)
+- [Testing](#testing)
+- [Deployment](#deployment)
+- [Contributing](#contributing)
+- [License](#license)
+- [Nx Graph](#nx-graph)
+- [Kubernetes (K8s) Design](#kubernetes-k8s-design)
 
-minikube service index-nodeport-service --url
-curl --resolve "tckhb.com:80:$( minikube ip )" -i http://tckhb.com/api/auth
-https://kubernetes.io/docs/tasks/access-application-cluster/ingress-minikube/
-https://minikube.sigs.k8s.io/docs/start/
+## Introduction
 
-kubectl get services -n ingress-nginx
-kubectl get ingress
-minikube ip (getting ip in linux)
+Ticket Hub is a monorepo project that consists of multiple backend microservices and a frontend application. It leverages Nx as a monorepo framework for efficient development and maintenance. Here's an overview of the project:
 
-thiisunsafe
+- **GitHub Repository:** [Ticket Hub](https://github.com/ErfanSeidipoor/ticket-hub)
+- **Frontend Application:** "client"
+- **Backend Microservices:**
+  - Payments
+  - Expiration
+  - Auth
+  - Orders
+  - Tickets
 
-kubectl rollout restart deployment tckhb-payments-deployment
+The project uses Kafka as a messaging broker for efficient communication between microservices.
 
-// imperetive command in k8s > run command to directly create object
-// declarative approach > write config file and apply
-kubectl create secret generic jwt-secret --from-literal=JWT_KEY=jwt-key-value
-kubectl create secret generic stripe-secret --from-literal=STRIPE_SECRET_KEY=stripe-key-secret-value
-kubectl create secret generic jwt-secret-test --from-literal=JWT_KEY=jwt-key-value
+## Project Structure
 
-skaffold -f ./skaffold.dev.yaml dev
-skaffold -f ./skaffold.test.yaml dev
-skaffold -f ./skaffold.test.yaml test
-skaffold -f ./skaffold.test.yaml run
-skaffold -f ./skaffold.test.tickets.yaml dev
+The project directory structure is organized as follows:
 
-kubectl get services --namespace=ingress-nginx
+- `/apps`: Contains the frontend application and Nest applications for microservices.
 
-//cross namespace communication
-http://<name of service (ex: ingress-nginx-controller)>/<name of name space (ex: ingress-nginx)>.src.cluster.local
+  - `/apps/auth`: Authentication microservice.
+  - `/apps/expiration`: Microservice for checking order expiration.
+  - `/apps/orders`: Microservice for storing all orders for tickets.
+  - `/apps/payments`: Microservice for handling and verifying Stripe transactions.
+  - `/apps/tickets`: Microservice for storing and handling tickets.
 
-kubectl describe nodes
+- `/libs`: Contains shared resources and code used across microservices and the frontend.
 
-docker system prune -a
+  - `/libs/decorator`: Shared decorators used across all microservices.
+  - `/libs/dto`: DTOs shared among all microservices.
+  - `/libs/enum`: Shared enums.
+  - `/libs/error`: Shared error definitions for all microservices.
+  - `/libs/event`: Kafka event producers and consumers.
+  - `/libs/middleware`: Shared Nest middlewares.
+  - `/libs/pipe`: Shared Nest pipes.
+  - `/libs/utils`: Shared JavaScript utility functions.
 
-kubectl apply -f ./in
+- `/infra`: Includes Dockerfiles and Kubernetes (K8s) configuration files (YAML) for all the microservices and any necessary Docker configurations.
+  - `/infra/docker`: Dockerfiles for production.
+  - `/infra/k8s.dev`: YAML files for K8s in development mode.
+  - `/infra/k8s.prod`: YAML files for K8s in production mode.
+  - `/infra/k8s.test`: YAML files for K8s in test mode.
 
-kubectl port-forward tckhb-kafdrop-deployment-664c597659-22nqz 9000:9000
+## Getting Started
 
-skaffold -f ./skaffold.dev.tickets.yaml dev
-kubectl apply -f ./infra/k8s.dev/tickets-mongo.deployment.yaml
-kubectl apply -f ./infra/k8s.dev/tickets.deployment.yaml
-kubectl apply -f ./infra/k8s.dev/kafka.deployment.yaml
-kubectl apply -f ./infra/k8s.dev/kafdrop.deployment.yaml
+To start working on the Ticket Hub project, follow these steps:
 
-kubectl delete deployments --all -n default
-kubectl delete services --all -n default
+1. Clone the repository:
 
-## Develop tickets
+   ```bash
+   git clone https://github.com/ErfanSeidipoor/ticket-hub.git
+   cd ticket-hub
+   ```
 
-kubectl apply -f ./infra/k8s.dev/tickets-mongo.deployment.yaml
-kubectl apply -f ./infra/k8s.dev/kafka.deployment.yaml
-kubectl apply -f ./infra/k8s.dev/kafdrop.deployment.yaml
-kubectl apply -f ./infra/k8s.dev/auth.deployment.yaml
-kubectl apply -f ./infra/k8s.dev/auth-mongo.deployment.yaml
-kubectl apply -f ./infra/k8s.dev/kafdrop.deployment.yaml
+2. Install project dependencies:
 
-skaffold -f ./skaffold.dev.tickets.yaml dev
+   ```bash
+   npm install
 
-kubectl port-forward tckhb-tickets-deployment-5f4c698667-xhr8h 8003:8003
-kubectl port-forward tckhb-kafdrop-deployment-5dd9fd89dd-gstv2 9000:9000
+   ```
 
-minikube service <service>
-minikube service <service> --url
-curl $(minikube service tckhb-kafdrop-nodeport-service --url)
+3. Set up the required development environment for each microservice based on K8s:
 
-kubectl expose deployment tckhb-kafdrop-deployment --type=NodePort
+```bash
+    # For Payments:
+    nx test payments:dev:req
 
-kubectl get pods
-kubectl get deployments
-kubectl get services
+    # For Expiration:
+    nx test expiration:dev:req
 
-/etc/nginx/nginx.conf
-sudo nginx -t
-sudo service nginx restart
+    # For Tickets:
+    nx test tickets:dev:req
 
-kubectl delete pods --all
-kubectl delete deployments --all
-kubectl delete services --all
+    # For Orders:
+    nx test orders:dev:req
 
-nx test orders --skip-nx-cach --runInBand
-nx test tickets --skip-nx-cache --test-file="apps/tickets/src/test/consumers/order-created.consumer.spec.ts"
-nx test tickets --skip-nx-cache --test-file="apps/tickets/src/test/api/create-ticket.tickets.spec.ts"
+    # For Auth:
+    nx test auth:dev:req
+```
 
-nx test expiration --skip-nx-cache --test-file="apps/expiration/src/test/consumers/order-created.consumer.spec.ts"
+### Development
 
-nx test orders --skip-nx-cache --test-file=""
-nx test auth --skip-nx-cache --test-file=""
-kubectl get pods -w
+- To start the frontend development server:
 
-kubectl -n <namespace> get secret <name-of-secret> -o jsonpath="{.data.password}" | base64 -d
+```bash
+  nx serve client
+```
 
-npm run auth:dev:req
-npm run auth:dev
+- To start a specific microservice development server, use Nx commands. For example, to start the Auth microservice in development mode:
 
-npm run tickets:dev:req
-npm run tickets:dev
+```bash
+  nx run auth:start:dev
+```
 
-npm run orders:dev:req
-npm run orders:dev
+### Testing
 
-npm run payments:dev:req
-npm run payments:dev
+- For testing each microservice, use the following commands:
 
-npm run expiration:dev:req
-npm run expiration:dev
+```bash
+  nx serve client
+```
 
-code /etc/hosts
+- To start a specific microservice development server, use Nx commands. For example, to start the Auth microservice in development mode:
+
+```bash
+    # For Payments:
+    nx test payments --skip-nx-cache --runInBand
+
+    # For Expiration:
+    nx test expiration --skip-nx-cache --runInBand
+
+    # For Tickets:
+    nx test tickets --skip-nx-cache --runInBand
+
+    # For Orders:
+    nx test orders --skip-nx-cache --runInBand
+
+    # For Auth:
+    nx test auth --skip-nx-cache --runInBand
+```
+
+## Contributing
+
+We welcome contributions from the community! Please check out our CONTRIBUTING.md file for detailed guidelines on how to contribute to Ticket Hub.
+
+## License
+
+This project is licensed under the [License Name] License - see the LICENSE.md file for details.
+
+## Nx Graph
+
+Below is a visual representation of the Nx dependency graph for the Ticket Hub project:
+
+## Kubernetes (K8s) Design Structure
+
+For detailed information on the Kubernetes design and configurations for the Ticket Hub project, please refer to K8s Design Documentation.
