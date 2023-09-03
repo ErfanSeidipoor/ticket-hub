@@ -10,8 +10,6 @@ Welcome to the **Ticket Hub** project! This is a monorepo project powered by Nx,
 - [Development](#development)
 - [Testing](#testing)
 - [Deployment](#deployment)
-- [Contributing](#contributing)
-- [License](#license)
 - [Nx Graph](#nx-graph)
 - [Kubernetes (K8s) Design](#kubernetes-k8s-design)
 
@@ -136,14 +134,6 @@ To start working on the Ticket Hub project, follow these steps:
     # For Auth:
     nx test auth --skip-nx-cache --runInBand
 ```
-
-## Contributing
-
-We welcome contributions from the community! Please check out our CONTRIBUTING.md file for detailed guidelines on how to contribute to Ticket Hub.
-
-## License
-
-This project is licensed under the [License Name] License - see the LICENSE.md file for details.
 
 ## Nx Graph
 
