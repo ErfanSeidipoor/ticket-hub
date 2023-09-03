@@ -148,7 +148,9 @@ This project is licensed under the [License Name] License - see the LICENSE.md f
 ## Nx Graph
 
 Below is a visual representation of the Nx dependency graph for the Ticket Hub project:
+![Nx Graph](graph.png)
 
 ## Kubernetes (K8s) Design Structure
 
 For detailed information on the Kubernetes design and configurations for the Ticket Hub project, please refer to K8s Design Documentation.
+![Design Structure](ticket-hub.svg)
